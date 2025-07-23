@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Finder - Find Your Perfect Camera</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /* Camera Finder specific styles */
+        .finder-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+        
+        .finder-intro {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .finder-intro h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .finder-intro p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .finder-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .form-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.3rem;
+        }
+        
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .radio-option:hover {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 0.75rem;
+        }
+        
+        .radio-option.selected {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+        
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+        }
+        
+        .checkbox-option input[type="checkbox"] {
+            margin-right: 0.75rem;
+        }
+        
+        .budget-slider {
+            margin-top: 1rem;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            cursor: pointer;
+        }
+        
+        .budget-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .finder-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        
+        .results-section {
+            margin-top: 3rem;
+            display: none;
+        }
+        
+        .results-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .recommendation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 2rem;
+        }
+        
+        .recommendation-image {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .recommendation-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .match-score {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendation-reasons {
+            list-style: none;
+            margin: 1rem 0;
+        }
+        
+        .recommendation-reasons li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .recommendation-reasons li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .recommendation-price {
+            font-size: 1.3rem;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .recommendation-card {
+                grid-template-columns: 1fr;
+            }
+            
+            .recommendation-image {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/">
+                        <span class="logo-icon">📷</span>
+                        <span class="logo-text">Camera Manual Vault</span>
+                    </a>
+                </div>
+                
+                <nav class="main-nav">
+                    <a href="/cameras">Browse Cameras</a>
+                    <a href="/camera-finder" class="active">Camera Finder</a>
+                    <a href="/articles">Articles</a>
+                </nav>
+                
+                <div class="header-search">
+                    <form action="/search" method="get">
+                        <input type="search" name="q" placeholder="Search cameras..." 
+                               class="search-input" autocomplete="off">
+                        <button type="submit" class="search-btn">🔍</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="finder-container">
+        <div class="finder-intro">
+            <h1>🎯 Find Your Perfect Camera</h1>
+            <p>Answer a few questions and we'll recommend the best cameras for your needs</p>
+        </div>
+        
+        <form class="finder-form" id="finderForm">
+            <!-- Use Case -->
+            <div class="form-section">
+                <h3>What will you primarily use the camera for?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="useCase" value="photography" required>
+                        <span>Photography</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="useCase" value="video">
+                        <span>Video/Filmmaking</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="useCase" value="hybrid">
+                        <span>Both Photo & Video</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="useCase" value="vlog">
+                        <span>Vlogging/Content Creation</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Experience Level -->
+            <div class="form-section">
+                <h3>What's your experience level?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="experience" value="beginner" required>
+                        <span>Beginner</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="experience" value="intermediate">
+                        <span>Intermediate</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="experience" value="professional">
+                        <span>Professional</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Budget -->
+            <div class="form-section">
+                <h3>What's your budget?</h3>
+                <div class="budget-slider">
+                    <input type="range" class="slider" id="budgetSlider" 
+                           min="500" max="10000" value="2500" step="100">
+                    <div class="budget-display">
+                        <span>$500</span>
+                        <span id="budgetValue">$2,500</span>
+                        <span>$10,000+</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Important Features -->
+            <div class="form-section">
+                <h3>Which features are important to you?</h3>
+                <div class="checkbox-group">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="stabilization">
+                        <span>Image Stabilization</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="weather-sealed">
+                        <span>Weather Sealing</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="4k-video">
+                        <span>4K Video</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="fast-autofocus">
+                        <span>Fast Autofocus</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="low-light">
+                        <span>Low Light Performance</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="features" value="flip-screen">
+                        <span>Flip/Articulating Screen</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Camera Type Preference -->
+            <div class="form-section">
+                <h3>Any preference on camera type?</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="cameraType" value="any" checked>
+                        <span>No Preference</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cameraType" value="mirrorless">
+                        <span>Mirrorless</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cameraType" value="dslr">
+                        <span>DSLR</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="cameraType" value="compact">
+                        <span>Compact/Point & Shoot</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="finder-actions">
+                <button type="submit" class="btn-primary">Find My Camera</button>
+                <button type="reset" class="btn-secondary">Reset</button>
+            </div>
+        </form>
+        
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>🎯 Your Camera Recommendations</h2>
+                <p>Based on your preferences, here are our top picks:</p>
+            </div>
+            
+            <div id="recommendationsList">
+                <!-- Recommendations will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 Camera Manual Vault. Educational Use Only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Budget slider
+        const budgetSlider = document.getElementById('budgetSlider');
+        const budgetValue = document.getElementById('budgetValue');
+        
+        budgetSlider.addEventListener('input', (e) => {
+            const value = parseInt(e.target.value);
+            budgetValue.textContent = value >= 10000 ? '$10,000+' : `$${value.toLocaleString()}`;
+        });
+        
+        // Radio option styling
+        document.querySelectorAll('.radio-option input').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // Remove selected class from all options in this group
+                document.querySelectorAll(`input[name="${e.target.name}"]`).forEach(r => {
+                    r.closest('.radio-option').classList.remove('selected');
+                });
+                // Add selected class to current option
+                e.target.closest('.radio-option').classList.add('selected');
+            });
+        });
+        
+        // Form submission
+        document.getElementById('finderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(e.target);
+            const preferences = {
+                useCase: formData.get('useCase'),
+                experience: formData.get('experience'),
+                budget: parseInt(budgetSlider.value),
+                features: formData.getAll('features'),
+                cameraType: formData.get('cameraType')
+            };
+            
+            // Show loading state
+            const resultsSection = document.getElementById('resultsSection');
+            const recommendationsList = document.getElementById('recommendationsList');
+            resultsSection.style.display = 'block';
+            recommendationsList.innerHTML = '<div class="loading">Finding your perfect cameras...</div>';
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            try {
+                // Call API
+                const response = await fetch('/api/camera-finder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(preferences)
+                });
+                
+                const data = await response.json();
+                displayRecommendations(data.recommendations);
+                
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+                recommendationsList.innerHTML = 
+                    '<div class="error">Error getting recommendations. Please try again.</div>';
+            }
+        });
+        
+        function displayRecommendations(recommendations) {
+            const container = document.getElementById('recommendationsList');
+            
+            if (!recommendations || recommendations.length === 0) {
+                container.innerHTML = '<p>No cameras found matching your criteria. Try adjusting your preferences.</p>';
+                return;
+            }
+            
+            container.innerHTML = recommendations.map((rec, index) => `
+                <div class="recommendation-card">
+                    <img src="${rec.proxiedImageUrl || '/images/placeholder.jpg'}" 
+                         alt="${rec.fullName}" 
+                         class="recommendation-image">
+                    <div class="recommendation-info">
+                        <h3>${index + 1}. ${rec.fullName}</h3>
+                        <span class="match-score">${rec.matchScore}% Match</span>
+                        
+                        <ul class="recommendation-reasons">
+                            ${rec.reasons.map(reason => `<li>${reason}</li>`).join('')}
+                        </ul>
+                        
+                        <div class="recommendation-price">
+                            ${rec.price ? `$${rec.price.toLocaleString()}` : 'Price information not available'}
+                        </div>
+                        
+                        <div class="recommendation-actions">
+                            <a href="/camera/${rec.id}" class="btn-primary">View Details</a>
+                            ${rec.manualUrl ? 
+                                '<a href="' + rec.manualUrl + '" class="btn-secondary" target="_blank">Download Manual</a>' : 
+                                ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Reset form
+        document.querySelector('button[type="reset"]').addEventListener('click', () => {
+            document.getElementById('resultsSection').style.display = 'none';
+            document.querySelectorAll('.radio-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            budgetValue.textContent = '$2,500';
+        });
+    </script>
+</body>
+</html>
