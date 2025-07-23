@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse All Cameras - Camera Manual Vault</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /* Page specific styles */
+        .filters-sidebar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 100px;
+        }
+        
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+        
+        .filter-group h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .filter-option input {
+            margin-right: 0.5rem;
+        }
+        
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .camera-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .camera-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .camera-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .camera-info {
+            padding: 1.5rem;
+        }
+        
+        .camera-brand {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        
+        .camera-model {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .camera-price {
+            color: #e74c3c;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .camera-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .page-btn.active {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        
+        .browse-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .browse-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-sidebar {
+                position: static;
+                margin-bottom: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/">
+                        <span class="logo-icon">📷</span>
+                        <span class="logo-text">Camera Manual Vault</span>
+                    </a>
+                </div>
+                
+                <nav class="main-nav">
+                    <a href="/cameras" class="active">Browse Cameras</a>
+                    <a href="/camera-finder">Camera Finder</a>
+                    <a href="/articles">Articles</a>
+                </nav>
+                
+                <div class="header-search">
+                    <form action="/search" method="get">
+                        <input type="search" name="q" placeholder="Search cameras..." 
+                               class="search-input" autocomplete="off">
+                        <button type="submit" class="search-btn">🔍</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1>Browse All Cameras</h1>
+        
+        <div class="browse-container">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <h2>Filters</h2>
+                
+                <div class="filter-group">
+                    <h3>Category</h3>
+                    <label class="filter-option">
+                        <input type="checkbox" name="category" value="mirrorless">
+                        <span>Mirrorless</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="category" value="dslr">
+                        <span>DSLR</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="category" value="cinema">
+                        <span>Cinema</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="category" value="action">
+                        <span>Action</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="category" value="smartphone">
+                        <span>Smartphone</span>
+                    </label>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Brand</h3>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brand" value="Canon">
+                        <span>Canon</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brand" value="Sony">
+                        <span>Sony</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brand" value="Nikon">
+                        <span>Nikon</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brand" value="Fujifilm">
+                        <span>Fujifilm</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="brand" value="Panasonic">
+                        <span>Panasonic</span>
+                    </label>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Price Range</h3>
+                    <label class="filter-option">
+                        <input type="checkbox" name="price" value="0-1000">
+                        <span>Under $1,000</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="price" value="1000-2500">
+                        <span>$1,000 - $2,500</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="price" value="2500-5000">
+                        <span>$2,500 - $5,000</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" name="price" value="5000+">
+                        <span>$5,000+</span>
+                    </label>
+                </div>
+                
+                <button class="btn-primary" style="width: 100%" onclick="applyFilters()">
+                    Apply Filters
+                </button>
+            </aside>
+            
+            <!-- Main Content -->
+            <section>
+                <div class="results-header">
+                    <div>
+                        <h2 id="resultsCount">Loading cameras...</h2>
+                    </div>
+                    <div>
+                        <select class="sort-select" onchange="sortCameras(this.value)">
+                            <option value="newest">Newest First</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="name">Name: A-Z</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="cameras-grid" id="camerasGrid">
+                    <!-- Cameras will be loaded here -->
+                    <div class="loading">Loading cameras...</div>
+                </div>
+                
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be added here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 Camera Manual Vault. Educational Use Only.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentPage = 1;
+        let currentFilters = {};
+        let currentSort = 'newest';
+        
+        // Load cameras on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCameras();
+        });
+        
+        async function loadCameras(page = 1) {
+            currentPage = page;
+            const params = new URLSearchParams({
+                page: currentPage,
+                limit: 20,
+                sort: currentSort,
+                ...currentFilters
+            });
+            
+            try {
+                const response = await fetch(`/api/cameras?${params}`);
+                const data = await response.json();
+                
+                displayCameras(data.cameras);
+                updateResultsCount(data.cameras.length);
+                createPagination(data.page, Math.ceil(data.totalCount / data.limit));
+                
+            } catch (error) {
+                console.error('Error loading cameras:', error);
+                document.getElementById('camerasGrid').innerHTML = 
+                    '<div class="error">Error loading cameras. Please try again.</div>';
+            }
+        }
+        
+        function displayCameras(cameras) {
+            const grid = document.getElementById('camerasGrid');
+            
+            if (cameras.length === 0) {
+                grid.innerHTML = '<div class="no-results">No cameras found matching your criteria.</div>';
+                return;
+            }
+            
+            grid.innerHTML = cameras.map(camera => `
+                <div class="camera-card" onclick="window.location.href='/camera/${camera.id}'">
+                    <img src="${camera.proxiedImageUrl || '/images/placeholder.jpg'}" 
+                         alt="${camera.fullName}" 
+                         class="camera-image"
+                         loading="lazy">
+                    <div class="camera-info">
+                        <div class="camera-brand">${camera.brand}</div>
+                        <h3 class="camera-model">${camera.model}</h3>
+                        <div class="camera-price">
+                            ${camera.price ? `$${camera.price.toLocaleString()}` : 'Price N/A'}
+                        </div>
+                        <div class="camera-meta">
+                            <span>${camera.category || 'Uncategorized'}</span>
+                            ${camera.releaseYear ? `<span>${camera.releaseYear}</span>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateResultsCount(count) {
+            document.getElementById('resultsCount').textContent = 
+                `${count} cameras found`;
+        }
+        
+        function createPagination(currentPage, totalPages) {
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                html += `<button class="page-btn" onclick="loadCameras(${currentPage - 1})">Previous</button>`;
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" 
+                         onclick="loadCameras(${i})">${i}</button>`;
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                html += `<button class="page-btn" onclick="loadCameras(${currentPage + 1})">Next</button>`;
+            }
+            
+            pagination.innerHTML = html;
+        }
+        
+        function applyFilters() {
+            currentFilters = {};
+            
+            // Get selected categories
+            const categoryBoxes = document.querySelectorAll('input[name="category"]:checked');
+            if (categoryBoxes.length > 0) {
+                currentFilters.category = Array.from(categoryBoxes).map(cb => cb.value).join(',');
+            }
+            
+            // Get selected brands
+            const brandBoxes = document.querySelectorAll('input[name="brand"]:checked');
+            if (brandBoxes.length > 0) {
+                currentFilters.brand = Array.from(brandBoxes).map(cb => cb.value).join(',');
+            }
+            
+            // TODO: Add price range filtering
+            
+            loadCameras(1);
+        }
+        
+        function sortCameras(sortBy) {
+            currentSort = sortBy;
+            loadCameras(currentPage);
+        }
+    </script>
+</body>
+</html>
