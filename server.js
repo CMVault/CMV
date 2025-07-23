@@ -18,6 +18,7 @@ class CameraVaultServer {
     this.setupDatabase();
     this.setupRoutes();
     this.setupImageCache();
+    this.setupAttributionSystem();
   }
 
   setupMiddleware() {
@@ -86,6 +87,11 @@ class CameraVaultServer {
     await fs.mkdir(this.publicImagesDir, { recursive: true });
   }
 
+  async setupAttributionSystem() {
+    this.attributionDir = path.join(__dirname, 'cache', 'attribution');
+    await fs.mkdir(this.attributionDir, { recursive: true });
+  }
+
   setupRoutes() {
     this.app.get('/api/cameras', this.getCameras.bind(this));
     this.app.get('/api/camera/:id', this.getCamera.bind(this));
@@ -98,22 +104,38 @@ class CameraVaultServer {
 
   async imageProxy(req, res) {
     const imageUrl = req.query.url;
+    const source = req.query.source || 'Unknown';
+    
     if (!imageUrl) return res.status(400).json({ error: 'No URL provided' });
 
     try {
+      // Check cache first
       const cachedImage = await this.getCachedImage(imageUrl);
       if (cachedImage) {
+        // Add attribution headers
+        try {
+          const urlHash = crypto.createHash('md5').update(imageUrl).digest('hex');
+          const attributionFile = path.join(this.attributionDir, `${urlHash}.json`);
+          const attribution = JSON.parse(await fs.readFile(attributionFile, 'utf8'));
+          res.set('X-Image-Source', attribution.source);
+          res.set('X-Original-URL', attribution.originalUrl);
+        } catch (e) {
+          // Attribution file might not exist for old cached images
+        }
         res.set('Content-Type', cachedImage.contentType);
         res.set('Cache-Control', 'public, max-age=86400');
         return res.sendFile(cachedImage.localPath);
       }
 
+      // Download image
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer',
         timeout: 10000,
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'User-Agent': 'Mozilla/5.0 (Camera Manual Vault - Educational/Non-commercial Use)',
           'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.9',
+          'Accept-Encoding': 'gzip, deflate, br',
           'Referer': new URL(imageUrl).origin
         }
       });
@@ -126,19 +148,36 @@ class CameraVaultServer {
       const cachePath = path.join(this.cacheDir, filename);
       const publicPath = path.join(this.publicImagesDir, filename);
 
+      // Save original to cache
       await fs.writeFile(cachePath, buffer);
+
+      // Process and optimize image
       await sharp(buffer)
         .resize(800, 600, { fit: 'inside', withoutEnlargement: true })
         .jpeg({ quality: 85, progressive: true })
         .toFile(publicPath);
 
+      // Save attribution data
+      const attributionFile = path.join(this.attributionDir, `${hash}.json`);
+      const attributionData = {
+        originalUrl: imageUrl,
+        source: source,
+        downloadedAt: new Date().toISOString(),
+        domain: new URL(imageUrl).hostname
+      };
+      await fs.writeFile(attributionFile, JSON.stringify(attributionData, null, 2));
+
+      // Save to database
       this.db.run(
         'INSERT OR REPLACE INTO image_cache (url, localPath, contentType, size) VALUES (?, ?, ?, ?)',
         [imageUrl, publicPath, contentType, buffer.length]
       );
 
+      // Send with attribution headers
       res.set('Content-Type', 'image/jpeg');
       res.set('Cache-Control', 'public, max-age=86400');
+      res.set('X-Image-Source', source);
+      res.set('X-Original-URL', imageUrl);
       res.sendFile(publicPath);
 
     } catch (error) {
@@ -271,7 +310,6 @@ class CameraVaultServer {
   async cameraFinder(req, res) {
     const { useCase, experience, budget, features, cameraType } = req.body;
     
-    // Simple recommendation logic - expand this
     let query = 'SELECT * FROM cameras WHERE 1=1';
     const params = [];
     
