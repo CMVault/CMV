@@ -1,50 +1,51 @@
 # PROJECT STATUS - Camera Manual Vault
 
-## Last Updated: November 14, 2024, 7:45 PM PST
+## Last Updated: November 15, 2024, 3:30 PM PST
 
 ## 🎯 Current Task:
-- Implementing Claude automation system
-- Deploying search and camera detail pages
-- Setting up auto-scrapers
+- Update cameras.html to dark theme
+- Update camera-finder.html to dark theme
+- Fix server.js camera route for detail pages
 
 ## ✅ Completed Today:
-- Created CLAUDE_AUTOMATION.md for chat automation
-- Built search.html with dark theme matching homepage
-- Built camera-detail.html with dark theme
-- Designed complete automation workflow
-- Created scraper automation plans
+- Set up GitHub Actions scraper (runs every 6 hours)
+- Fixed scraper permissions and workflow
+- Created data folder with test camera data
+- Scraper now successfully creates and commits files
+- Decided to finish site before adding real scraping
 
 ## 🔄 In Progress:
-- Updating server.js with camera detail route
-- Creating GitHub Actions scraper
-- Testing automation system
+- Converting cameras.html to dark theme
+- Converting camera-finder.html to dark theme
+- Adding /camera/:id route to server.js
 
 ## ❌ Still Need:
-- Update server.js route for camera details
-- Create .github/workflows/scraper.yml
-- Update existing pages to dark theme (cameras.html, camera-finder.html)
-- Create missing pages (productions, forum, blog, compare, quiz)
-- Implement ultimate scraper with 50+ sources
+- Update cameras.html and camera-finder.html to dark theme
+- Fix server.js route for camera detail pages
+- Create placeholder.jpg image (skipped for now)
+- Build missing pages (productions, forum, blog, compare, quiz)
+- Add real scraper files (ultimate-scraper.js) - waiting until site is ready
 - User authentication system
 - Email notifications
 - Admin dashboard
 
 ## 🐛 Active Issues:
-- Camera detail pages need server route to work
+- Camera detail pages return 404 (missing route in server.js)
+- Two pages still using light theme (cameras.html, camera-finder.html)
 - Some navigation links go to non-existent pages
-- Need placeholder.jpg image
+- Scraper runs but only creates test data (intentional for now)
 
 ## 📁 Files Changed:
-- Created CLAUDE_AUTOMATION.md
-- Created public/search.html
-- Created public/camera-detail.html
+- Created .github/workflows/scraper.yml (working!)
+- Created data/cameras.json with test camera
+- Created data/camera-vault.db
 - Updated PROJECT_STATUS.md
 
 ## 💡 Next Session:
-Start with: "start cmv automation" to load this status
+Start with: "start cmv automation" and update cameras.html to dark theme
 
 ## 🚀 New Ideas to Explore:
-- Auto-scraping system running 24/7 via GitHub Actions
+- Auto-scraping system running 24/7 via GitHub Actions (ready, just needs scraper files)
 - AI camera identification from images
 - User authentication and profiles
 - Camera comparison tool
@@ -61,19 +62,25 @@ Start with: "start cmv automation" to load this status
 - Camera timeline visualization
 - YouTube review integration
 - Social features (likes, saves, comments)
+- Camera recommendation quiz
+- Gear marketplace integration
+- Photography course recommendations
+- Camera repair shop directory
+- Firmware update tracker
+- Used camera price guide
 
 ## 📝 Important Notes:
-- Automation system is now active - say "start cmv automation" in any chat
-- All pages use dark theme matching index.html
-- Image proxy handles CORS issues
-- GitHub Actions will run scrapers automatically
-- No terminal needed - everything through Claude chat
-- Deploy by clicking GitHub links Claude provides
+- GitHub Actions scraper is WORKING - runs every 6 hours
+- Currently only creates test data (Canon R5) to avoid clutter
+- Will add real scraper after site is complete
+- Dark theme needs to be applied to cameras.html and camera-finder.html
+- Server route for camera details still needs to be added
+- All pages should use dark theme for consistency
 
 ## 🤖 Automation System
-- Status: ACTIVE
+- Status: ACTIVE ✅
+- Scraper: WORKING (test mode) ✅
 - Instructions: See CLAUDE_AUTOMATION.md
 - Usage: Say "start cmv automation" in any Claude chat
-- Auto-tracking: Enabled
-- Session: November 14, 2024 session
-- Token Usage: ~58,000 tokens used (71% remaining)
+- Session: November 15, 2024 session
+- Progress: Scraper fixed, ready for theme updates
