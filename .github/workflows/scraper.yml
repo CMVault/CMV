@@ -1,0 +1,51 @@
+name: Auto Camera Scraper
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          
+      - name: Install dependencies
+        run: npm install
+        
+      - name: Run camera scraper
+        run: |
+          echo "Starting camera scraping..."
+          node ultimate-scraper.js
+        env:
+          NODE_ENV: production
+          
+      - name: Run continuous scraper
+        run: |
+          echo "Running continuous scraper..."
+          timeout 300 node continuous-scraper.js || true
+        continue-on-error: true
+        
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: '🤖 Auto-update camera database'
+          commit_options: '--no-verify'
+          file_pattern: 'data/*.db data/*.json'
+          commit_user_name: 'Camera Bot'
+          commit_user_email: 'bot@cameravault.com'
