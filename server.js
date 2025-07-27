@@ -100,6 +100,7 @@ class CameraVaultServer {
     this.app.get('/api/image-proxy', this.imageProxy.bind(this));
     this.app.get('/images/cameras/:filename', this.serveCachedImage.bind(this));
     this.app.post('/api/camera-finder', this.cameraFinder.bind(this));
+    this.app.get('/camera/:id', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'camera-detail.html')); });
   }
 
   async imageProxy(req, res) {
