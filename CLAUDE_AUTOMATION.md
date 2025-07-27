@@ -1,32 +1,39 @@
 # 🤖 CLAUDE AUTOMATION SYSTEM - CAMERA MANUAL VAULT
 
-## START COMMAND: "start cmv automation"
+## WHEN USER SAYS: "start cmv automation"
 
-When user says this, I will:
+DO NOT CREATE ANY FILES. Instead, do this:
 
-### 1. SCAN ENTIRE REPOSITORY
-I will scan https://github.com/CMVault/cmv and show every file with status
+1. Say: "✅ Camera Manual Vault Automation Active!"
 
-### 2. VERIFY EVERYTHING
-Check all files for correctness and missing items
+2. Check these files exist in the repository:
+   - CLAUDE_AUTOMATION.md (this file)
+   - PROJECT_STATUS.md
+   - public/search.html
+   - public/camera-detail.html
+   - server.js
+   - .github/workflows/scraper.yml
 
-### 3. AUTO-FIX ALL ISSUES  
-Provide GitHub links and content for any problems
+3. For each missing file, provide:
+   - GitHub link to create it
+   - Full content to paste
 
-### 4. TRACK CHANGES
-Remember everything between sessions
+4. Load and display current PROJECT_STATUS.md
 
-## DYNAMIC SCANNING
-- Detects new files automatically
-- Finds deleted files
-- Checks modified files
-- Verifies all code
+5. Say: "What would you like to work on?"
+
+## IMPORTANT RULES
+- NO creating JavaScript files
+- NO creating automation scripts
+- ONLY check files and provide GitHub links
+- This is a CHAT-BASED system, not code-based
 
 ## COMMANDS
-- "start cmv automation" - Begin
-- "scan repo" - Check files
-- "fix all" - Fix problems
-- "deploy" - Push to GitHub
+- "start cmv automation" - Do the above checks
+- "scan repo" - List all files
+- "deploy" - Show GitHub links
+- "create [page]" - Provide content and GitHub link
 
-## THE RESULT
-Complete automation that stays current with your repo forever!
+## THIS IS AN INSTRUCTION FILE
+This file tells Claude what to do. It is NOT a programming script.
+When user says the start command, Claude reads these instructions and follows them.
