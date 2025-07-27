@@ -708,8 +708,7 @@
                     <li><a href="/cameras" class="active">Cameras</a></li>
                     <li><a href="/camera-finder">Camera Finder</a></li>
                     <li><a href="/productions">Productions</a></li>
-                    <li><a href="/forum">Forum</a></li>
-                    <li><a href="/search">Search</a></li>
+                    <li><a href="/camera-blog">Camera Blog</a></li>
                     <li><a href="/login">Login</a></li>
                 </ul>
             </nav>
@@ -731,7 +730,7 @@
                         <input type="search" 
                                id="searchInput"
                                class="search-input" 
-                               placeholder="Search cameras, brands, features..."
+                               placeholder="Search cameras only..."
                                autocomplete="off">
                     </div>
                     <button class="filter-toggle-btn" id="filterToggle" onclick="toggleFilters()">
@@ -1190,13 +1189,13 @@
             const suggestions = [];
             const seen = new Set();
             
-            // Camera matches
+            // CAMERAS ONLY - Camera matches
             const cameraMatches = allCameras
                 .filter(camera => {
                     const searchText = `${camera.fullName} ${camera.brand} ${camera.model}`.toLowerCase();
                     return searchText.includes(query);
                 })
-                .slice(0, 5);
+                .slice(0, 8);
             
             if (cameraMatches.length > 0) {
                 suggestions.push({ type: 'category', label: 'Cameras' });
@@ -1205,19 +1204,331 @@
                         type: 'camera',
                         icon: '📷',
                         main: camera.fullName,
-                        sub: `${camera.category || 'Camera'} • ${camera.releaseYear || 'N/A'}`,
+                        sub: `${camera.category || 'Camera'} • ${camera.releaseYear || 'N/A'} • ${camera.price ? '
+        
+        function renderSuggestions(suggestions) {
+            const container = document.getElementById('suggestionsContainer');
+            
+            if (suggestions.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            suggestions.forEach((item, index) => {
+                if (item.type === 'category') {
+                    html += `<div class="suggestion-category">${item.label}</div>`;
+                } else {
+                    html += `
+                        <div class="suggestion-item" data-index="${index}" 
+                             onmouseover="highlightedSuggestion=${index};updateSuggestionHighlight()"
+                             onclick="executeSuggestion(${index})">
+                            <span class="suggestion-icon">${item.icon}</span>
+                            <div class="suggestion-text">
+                                <div class="suggestion-main">${highlightMatch(item.main, searchQuery)}</div>
+                                <div class="suggestion-sub">${item.sub}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            container.innerHTML = html;
+            window.currentSuggestions = suggestions;
+        }
+        
+        function highlightMatch(text, query) {
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="suggestion-match">$1</span>');
+        }
+        
+        function executeSuggestion(index) {
+            const suggestion = window.currentSuggestions[index];
+            if (suggestion && suggestion.action) {
+                suggestion.action();
+            }
+        }
+        
+        function updateSuggestionHighlight() {
+            document.querySelectorAll('.suggestion-item').forEach((item, index) => {
+                item.classList.toggle('highlighted', index === highlightedSuggestion);
+            });
+        }
+        
+        function showSuggestions() {
+            document.getElementById('suggestionsContainer').classList.add('show');
+            suggestionsVisible = true;
+            highlightedSuggestion = -1;
+        }
+        
+        function hideSuggestions() {
+            document.getElementById('suggestionsContainer').classList.remove('show');
+            suggestionsVisible = false;
+            highlightedSuggestion = -1;
+        }
+        
+        function toggleFilters() {
+            const dropdown = document.getElementById('filterDropdown');
+            const toggle = document.getElementById('filterToggle');
+            
+            dropdown.classList.toggle('show');
+            toggle.classList.toggle('active');
+        }
+        
+        function updateFilters() {
+            activeFilters = {};
+            
+            document.querySelectorAll('.filter-checkbox input:checked').forEach(checkbox => {
+                const filterType = checkbox.name;
+                const value = checkbox.value;
+                
+                if (!activeFilters[filterType]) {
+                    activeFilters[filterType] = new Set();
+                }
+                activeFilters[filterType].add(value);
+            });
+            
+            renderActiveFilters();
+            applyFilters();
+        }
+        
+        function renderActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            const hasFilters = Object.values(activeFilters).some(set => set.size > 0);
+            
+            if (!hasFilters) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            let html = '';
+            
+            Object.entries(activeFilters).forEach(([type, values]) => {
+                values.forEach(value => {
+                    html += `
+                        <span class="filter-tag">
+                            ${formatFilterLabel(value)}
+                            <span class="filter-tag-remove" onclick="removeFilter('${type}', '${value}')">×</span>
+                        </span>
+                    `;
+                });
+            });
+            
+            html += '<span class="filter-tag" style="background: transparent; border: 1px solid var(--border-color);" onclick="clearAllFilters()">Clear all ×</span>';
+            
+            container.innerHTML = html;
+        }
+        
+        function removeFilter(type, value) {
+            if (activeFilters[type]) {
+                activeFilters[type].delete(value);
+                if (activeFilters[type].size === 0) {
+                    delete activeFilters[type];
+                }
+            }
+            
+            document.querySelector(`input[name="${type}"][value="${value}"]`).checked = false;
+            renderActiveFilters();
+            applyFilters();
+        }
+        
+        function clearAllFilters() {
+            activeFilters = {};
+            document.querySelectorAll('.filter-checkbox input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            renderActiveFilters();
+            applyFilters();
+        }
+        
+        function generateAlphabetJumps() {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+            const jumpContainer = document.getElementById('alphabetJump');
+            
+            const availableLetters = new Set();
+            filteredCameras.forEach(camera => {
+                const firstLetter = camera.fullName[0].toUpperCase();
+                availableLetters.add(/[A-Z]/.test(firstLetter) ? firstLetter : '#');
+            });
+            
+            jumpContainer.innerHTML = alphabet.map(letter => 
+                `<a href="#section-${letter}" 
+                    class="jump-link ${!availableLetters.has(letter) ? 'disabled' : ''}" 
+                    onclick="${availableLetters.has(letter) ? `jumpToLetter('${letter}')` : 'return false'}">${letter}</a>`
+            ).join('');
+        }
+        
+        function jumpToLetter(letter) {
+            const element = document.getElementById(`section-${letter}`);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function applyFilters() {
+            filteredCameras = allCameras.filter(camera => {
+                // Search filter
+                if (searchQuery) {
+                    const searchableText = `${camera.fullName} ${camera.brand} ${camera.model} ${camera.tags.join(' ')}`.toLowerCase();
+                    if (!searchableText.includes(searchQuery)) {
+                        return false;
+                    }
+                }
+                
+                // Apply active filters
+                for (const [filterType, selectedValues] of Object.entries(activeFilters)) {
+                    if (!selectedValues || selectedValues.size === 0) continue;
+                    
+                    let match = false;
+                    
+                    if (filterType === 'category' && selectedValues.has(camera.category)) {
+                        match = true;
+                    } else if (filterType === 'brand' && selectedValues.has(camera.brand)) {
+                        match = true;
+                    } else {
+                        for (const value of selectedValues) {
+                            if (camera.tags.includes(value)) {
+                                match = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (!match) return false;
+                }
+                
+                return true;
+            });
+            
+            displayCameras();
+            updateResultsCount();
+            generateAlphabetJumps();
+        }
+        
+        function displayCameras() {
+            const container = document.getElementById('cameraList');
+            
+            if (filteredCameras.length === 0) {
+                container.innerHTML = '<div class="no-results">No cameras found matching your criteria.</div>';
+                return;
+            }
+            
+            // Group cameras by first letter
+            const grouped = {};
+            filteredCameras.forEach(camera => {
+                const firstLetter = camera.fullName[0].toUpperCase();
+                const key = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
+                
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(camera);
+            });
+            
+            // Generate HTML
+            let html = '';
+            const sortedKeys = Object.keys(grouped).sort((a, b) => {
+                if (a === '#') return 1;
+                if (b === '#') return -1;
+                return a.localeCompare(b);
+            });
+            
+            sortedKeys.forEach(letter => {
+                html += `
+                    <div class="alphabet-section" id="section-${letter}">
+                        <div class="alphabet-header">${letter}</div>
+                        <div class="camera-items">
+                `;
+                
+                grouped[letter].forEach(camera => {
+                    const cameraId = `camera-${camera.id}`;
+                    
+                    html += `
+                        <div class="camera-item" id="${cameraId}">
+                            <a href="/camera/${camera.id}" class="camera-link" style="display: contents;">
+                                <div class="camera-info">
+                                    <div class="camera-name">${camera.fullName}</div>
+                                    <div class="camera-details">
+                                        <span>${camera.category || 'Camera'}</span>
+                                        <span>•</span>
+                                        <span>${camera.releaseYear || 'N/A'}</span>
+                                    </div>
+                                </div>
+                                <div class="camera-meta">
+                                    <span class="camera-price">
+                                        ${camera.price ? `$${camera.price.toLocaleString()}` : 'Price N/A'}
+                                    </span>
+                                    ${camera.manualUrl ? 
+                                        '<span class="manual-indicator">📄 Manual</span>' : 
+                                        ''}
+                                </div>
+                            </a>
+                            <button class="show-tags-btn" onclick="toggleTags('${cameraId}')">
+                                Tags (${camera.tags.length})
+                            </button>
+                            <div class="tags-popup">
+                                <div class="tags-list">
+                                    ${camera.tags.map(tag => 
+                                        `<span class="tag-item">${tag}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function updateResultsCount() {
+            const count = filteredCameras.length;
+            const total = allCameras.length;
+            document.getElementById('resultsCount').textContent = 
+                count === total ? 
+                `${count} cameras` : 
+                `${count} of ${total} cameras`;
+        }
+        
+        function toggleTags(cameraId) {
+            const cameraItem = document.getElementById(cameraId);
+            if (cameraItem) {
+                cameraItem.classList.toggle('show-tags');
+                
+                document.querySelectorAll('.camera-item').forEach(item => {
+                    if (item.id !== cameraId) {
+                        item.classList.remove('show-tags');
+                    }
+                });
+            }
+            
+            event.stopPropagation();
+            event.preventDefault();
+        }
+        
+        function performSearch() {
+            // Search is already real-time, this is just for the search button
+            applyFilters();
+        }
+    </script>
+</body>
+</html> + camera.price.toLocaleString() : 'Price N/A'}`,
                         action: () => window.location.href = `/camera/${camera.id}`
                     });
                 });
             }
             
-            // Brand suggestions
+            // Brand suggestions (for filtering cameras)
             const brandMatches = Object.keys(filterStructure.brand)
                 .filter(brand => brand.toLowerCase().includes(query))
                 .slice(0, 3);
             
             if (brandMatches.length > 0) {
-                suggestions.push({ type: 'category', label: 'Brands' });
+                suggestions.push({ type: 'category', label: 'Filter by Brand' });
                 brandMatches.forEach(brand => {
                     suggestions.push({
                         type: 'brand',
@@ -1225,8 +1536,42 @@
                         main: brand,
                         sub: `${filterStructure.brand[brand]} cameras`,
                         action: () => {
-                            searchQuery = brand.toLowerCase();
-                            document.getElementById('searchInput').value = brand;
+                            // Clear search and apply brand filter
+                            document.getElementById('searchInput').value = '';
+                            searchQuery = '';
+                            
+                            // Check the brand filter
+                            const brandCheckbox = document.querySelector(`input[name="brand"][value="${brand}"]`);
+                            if (brandCheckbox) {
+                                brandCheckbox.checked = true;
+                                updateFilters();
+                            }
+                            
+                            hideSuggestions();
+                        }
+                    });
+                });
+            }
+            
+            // Camera-specific feature suggestions
+            const cameraFeatures = ['4k', '8k', 'full-frame', 'mirrorless', 'dslr', 'cinema', 'weather-sealed', 'ibis'];
+            const featureMatches = cameraFeatures.filter(feature => feature.includes(query));
+            
+            if (featureMatches.length > 0) {
+                suggestions.push({ type: 'category', label: 'Filter by Feature' });
+                featureMatches.slice(0, 3).forEach(feature => {
+                    // Count how many cameras have this feature
+                    const count = allCameras.filter(cam => cam.tags.includes(feature)).length;
+                    
+                    suggestions.push({
+                        type: 'feature',
+                        icon: '⚡',
+                        main: formatFilterLabel(feature),
+                        sub: `${count} cameras with this feature`,
+                        action: () => {
+                            // Apply feature as search
+                            searchQuery = feature;
+                            document.getElementById('searchInput').value = feature;
                             applyFilters();
                             hideSuggestions();
                         }
@@ -1234,26 +1579,26 @@
                 });
             }
             
-            // Feature suggestions
-            const featureMatches = [];
-            Object.values(tagger.tagRules.camera).flat().forEach(tag => {
-                if (tag.includes(query) && !seen.has(tag)) {
-                    seen.add(tag);
-                    featureMatches.push(tag);
-                }
-            });
-            
-            if (featureMatches.length > 0) {
-                suggestions.push({ type: 'category', label: 'Features' });
-                featureMatches.slice(0, 3).forEach(feature => {
+            // Quick suggestions for common searches
+            if (query.length === 0 || query === ' ') {
+                suggestions.push({ type: 'category', label: 'Quick Searches' });
+                const quickSearches = [
+                    { term: 'Latest cameras', icon: '🆕', filter: 'latest' },
+                    { term: 'Professional cameras', icon: '💼', filter: 'professional' },
+                    { term: 'Budget cameras', icon: '💰', filter: 'budget' },
+                    { term: 'Cinema cameras', icon: '🎬', filter: 'cinema' }
+                ];
+                
+                quickSearches.forEach(search => {
+                    const count = allCameras.filter(cam => cam.tags.includes(search.filter)).length;
                     suggestions.push({
-                        type: 'feature',
-                        icon: '⚡',
-                        main: formatFilterLabel(feature),
-                        sub: 'Feature',
+                        type: 'quick',
+                        icon: search.icon,
+                        main: search.term,
+                        sub: `${count} cameras`,
                         action: () => {
-                            searchQuery = feature;
-                            document.getElementById('searchInput').value = feature;
+                            searchQuery = search.filter;
+                            document.getElementById('searchInput').value = search.filter;
                             applyFilters();
                             hideSuggestions();
                         }
