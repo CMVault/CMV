@@ -4,178 +4,397 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse All Cameras - Camera Manual Vault</title>
-    <link rel="stylesheet" href="/css/main.css">
     <style>
-        /* Page specific styles */
-        .filters-sidebar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             position: sticky;
-            top: 100px;
+            top: 0;
+            z-index: 1000;
         }
-        
-        .filter-group {
-            margin-bottom: 2rem;
-        }
-        
-        .filter-group h3 {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-        
-        .filter-option {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-        
-        .filter-option input {
-            margin-right: 0.5rem;
-        }
-        
-        .cameras-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .camera-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .camera-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        
-        .camera-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-        
-        .camera-info {
-            padding: 1.5rem;
-        }
-        
-        .camera-brand {
-            color: #666;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-        
-        .camera-model {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin: 0.5rem 0;
-        }
-        
-        .camera-price {
-            color: #e74c3c;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        
-        .camera-meta {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.75rem;
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 3rem;
-        }
-        
-        .page-btn {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ddd;
-            background: white;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        .page-btn:hover {
-            background: #f0f0f0;
-        }
-        
-        .page-btn.active {
-            background: #e74c3c;
-            color: white;
-            border-color: #e74c3c;
-        }
-        
-        .results-header {
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
             margin-bottom: 2rem;
+            background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        
-        .sort-select {
-            padding: 0.5rem 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: white;
-        }
-        
+
+        /* Browse Container */
         .browse-container {
             display: grid;
             grid-template-columns: 250px 1fr;
             gap: 2rem;
             margin-top: 2rem;
         }
-        
+
+        /* Filters Sidebar */
+        .filters-sidebar {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .filters-sidebar h2 {
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .filter-option:hover {
+            color: var(--text-primary);
+        }
+
+        .filter-option input {
+            margin-right: 0.5rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Custom checkbox styling */
+        .filter-option input[type="checkbox"] {
+            appearance: none;
+            background: var(--darker-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .filter-option input[type="checkbox"]:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .filter-option input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Results Section */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-header h2 {
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+        }
+
+        .sort-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        /* Camera Grid */
+        .cameras-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .camera-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .camera-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: var(--card-hover);
+        }
+
+        .camera-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: var(--darker-bg);
+            padding: 20px;
+        }
+
+        .camera-info {
+            padding: 1.5rem;
+        }
+
+        .camera-brand {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .camera-model {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+            color: var(--text-primary);
+        }
+
+        .camera-price {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .camera-meta {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 3rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover {
+            background: var(--card-hover);
+            transform: translateY(-2px);
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        /* Error State */
+        .error {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 10px;
+            color: #e74c3c;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
             .browse-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .filters-sidebar {
                 position: static;
                 margin-bottom: 2rem;
+            }
+
+            h1 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="site-header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <a href="/">
-                        <span class="logo-icon">📷</span>
-                        <span class="logo-text">Camera Manual Vault</span>
-                    </a>
-                </div>
-                
-                <nav class="main-nav">
-                    <a href="/cameras" class="active">Browse Cameras</a>
-                    <a href="/camera-finder">Camera Finder</a>
-                    <a href="/articles">Articles</a>
-                </nav>
-                
-                <div class="header-search">
-                    <form action="/search" method="get">
-                        <input type="search" name="q" placeholder="Search cameras..." 
-                               class="search-input" autocomplete="off">
-                        <button type="submit" class="search-btn">🔍</button>
-                    </form>
-                </div>
-            </div>
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras" class="active">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/forum">Forum</a></li>
+                    <li><a href="/search">Search</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
         </div>
     </header>
 
@@ -255,7 +474,7 @@
                     </label>
                 </div>
                 
-                <button class="btn-primary" style="width: 100%" onclick="applyFilters()">
+                <button class="btn-primary" onclick="applyFilters()">
                     Apply Filters
                 </button>
             </aside>
@@ -263,17 +482,13 @@
             <!-- Main Content -->
             <section>
                 <div class="results-header">
-                    <div>
-                        <h2 id="resultsCount">Loading cameras...</h2>
-                    </div>
-                    <div>
-                        <select class="sort-select" onchange="sortCameras(this.value)">
-                            <option value="newest">Newest First</option>
-                            <option value="price-low">Price: Low to High</option>
-                            <option value="price-high">Price: High to Low</option>
-                            <option value="name">Name: A-Z</option>
-                        </select>
-                    </div>
+                    <h2 id="resultsCount">Loading cameras...</h2>
+                    <select class="sort-select" onchange="sortCameras(this.value)">
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
                 </div>
                 
                 <div class="cameras-grid" id="camerasGrid">
@@ -288,12 +503,8 @@
         </div>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-content">
-                <p>&copy; 2024 Camera Manual Vault. Educational Use Only.</p>
-            </div>
-        </div>
+    <footer class="footer">
+        <p>&copy; 2024 Camera Manual Vault. Educational Use Only.</p>
     </footer>
 
     <script>
@@ -361,7 +572,7 @@
         
         function updateResultsCount(count) {
             document.getElementById('resultsCount').textContent = 
-                `${count} cameras found`;
+                `${count} camera${count !== 1 ? 's' : ''} found`;
         }
         
         function createPagination(currentPage, totalPages) {
