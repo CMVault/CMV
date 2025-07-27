@@ -3,24 +3,30 @@
 ## START COMMAND: "start cmv automation"
 
 When user says this, I will:
-1. Load current PROJECT_STATUS.md
-2. Show what we're working on
-3. Track all changes
-4. Provide GitHub deployment links
 
-## AUTOMATION TRACKING
+### 1. SCAN ENTIRE REPOSITORY
+I will scan https://github.com/CMVault/cmv and show every file with status
 
-```yaml
-session:
-  project: Camera Manual Vault
-  repo: https://github.com/CMVault/cmv
-  started: [timestamp]
-  tokens: 0
-  
-queue:
-  files_to_create: []
-  files_to_update: []
-  files_to_delete: []
-  
-completed: []
-ideas: []
+### 2. VERIFY EVERYTHING
+Check all files for correctness and missing items
+
+### 3. AUTO-FIX ALL ISSUES  
+Provide GitHub links and content for any problems
+
+### 4. TRACK CHANGES
+Remember everything between sessions
+
+## DYNAMIC SCANNING
+- Detects new files automatically
+- Finds deleted files
+- Checks modified files
+- Verifies all code
+
+## COMMANDS
+- "start cmv automation" - Begin
+- "scan repo" - Check files
+- "fix all" - Fix problems
+- "deploy" - Push to GitHub
+
+## THE RESULT
+Complete automation that stays current with your repo forever!
