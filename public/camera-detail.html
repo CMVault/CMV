@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Camera Details - Camera Manual Vault</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Camera Header */
+        .camera-header {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 500px;
+            gap: 3rem;
+        }
+
+        .camera-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .camera-brand {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .camera-badges {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: var(--darker-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .badge.success {
+            background: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .camera-price {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 2rem;
+        }
+
+        .camera-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .action-btn-primary {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .action-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .action-btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Camera Image */
+        .camera-image-container {
+            position: relative;
+            background: var(--darker-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: contain;
+        }
+
+        .image-thumbnails {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .thumbnail:hover,
+        .thumbnail.active {
+            opacity: 1;
+            border-color: var(--primary-color);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Info Sections */
+        .info-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-section h2 {
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Specifications */
+        .specs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .spec-group {
+            background: var(--darker-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .spec-group h3 {
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .spec-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            color: var(--text-muted);
+        }
+
+        .spec-value {
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        .feature-icon {
+            color: var(--success-color);
+            font-size: 1.25rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .manual-box {
+            text-align: center;
+            padding: 2rem;
+            background: var(--darker-bg);
+            border-radius: 10px;
+        }
+
+        .manual-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Related Cameras */
+        .related-section {
+            margin-top: 4rem;
+        }
+
+        .related-section h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .related-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .related-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .related-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: var(--darker-bg);
+            padding: 1rem;
+        }
+
+        .related-info {
+            padding: 1.5rem;
+        }
+
+        .related-brand {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .related-model {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .related-meta {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .camera-header {
+                grid-template-columns: 1fr;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .camera-title {
+                font-size: 2rem;
+            }
+
+            .specs-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/forum">Forum</a></li>
+                    <li><a href="/search">Search</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="/">Home</a> / 
+            <a href="/cameras">Cameras</a> / 
+            <span id="breadcrumbName">Loading...</span>
+        </div>
+
+        <!-- Camera Header -->
+        <section class="camera-header">
+            <div class="camera-info">
+                <h1 class="camera-title" id="cameraTitle">Loading...</h1>
+                <div class="camera-brand" id="cameraBrand">Loading...</div>
+                
+                <div class="camera-badges" id="cameraBadges">
+                    <!-- Badges will be loaded here -->
+                </div>
+                
+                <div class="camera-price" id="cameraPrice">Loading...</div>
+                
+                <div class="camera-actions">
+                    <button class="action-btn action-btn-primary" id="downloadManualBtn" style="display: none;">
+                        📄 Download Manual
+                    </button>
+                    <button class="action-btn action-btn-secondary" onclick="window.print()">
+                        🖨️ Print Page
+                    </button>
+                    <button class="action-btn action-btn-secondary" onclick="shareCamera()">
+                        📤 Share
+                    </button>
+                </div>
+            </div>
+            
+            <div class="camera-image-container">
+                <img id="mainImage" 
+                     class="main-image"
+                     src="/images/placeholder.jpg" 
+                     alt="Camera">
+                <div class="image-thumbnails" id="thumbnails">
+                    <!-- Thumbnails will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Main Content -->
+            <div>
+                <!-- Tabbed Content -->
+                <div class="info-section">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                        <button class="tab" onclick="switchTab('specs')">Specifications</button>
+                        <button class="tab" onclick="switchTab('features')">Features</button>
+                        <button class="tab" onclick="switchTab('manual')">Manual</button>
+                    </div>
+
+                    <!-- Overview Tab -->
+                    <div class="tab-content active" id="overview-tab">
+                        <h2>About this Camera</h2>
+                        <p id="cameraDescription" style="margin-bottom: 2rem;">Loading camera information...</p>
+                        
+                        <h3 style="margin-bottom: 1rem;">Key Highlights</h3>
+                        <ul id="keyHighlights" style="list-style: none; padding: 0;">
+                            <!-- Highlights will be loaded here -->
+                        </ul>
+                    </div>
+
+                    <!-- Specifications Tab -->
+                    <div class="tab-content" id="specs-tab">
+                        <h2>Technical Specifications</h2>
+                        <div class="specs-grid" id="specsGrid">
+                            <!-- Specs will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Features Tab -->
+                    <div class="tab-content" id="features-tab">
+                        <h2>All Features</h2>
+                        <div class="features-grid" id="featuresList">
+                            <!-- Features will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Manual Tab -->
+                    <div class="tab-content" id="manual-tab">
+                        <div class="manual-box">
+                            <div class="manual-icon">📚</div>
+                            <h2>Camera Manual</h2>
+                            <p id="manualStatus" style="margin: 1rem 0;">Checking manual availability...</p>
+                            <button class="action-btn action-btn-primary" id="manualTabBtn" style="display: none;">
+                                Download Manual (PDF)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Manual Download Card -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 1rem;">Download Manual</h3>
+                    <div class="manual-box">
+                        <div class="manual-icon">📄</div>
+                        <p id="sidebarManualStatus">Checking...</p>
+                        <button class="action-btn action-btn-primary" id="sidebarManualBtn" style="display: none; margin-top: 1rem;">
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Info Card -->
+                <div class="sidebar-card">
+                    <h3 style="margin-bottom: 1rem;">Quick Info</h3>
+                    <div id="quickInfo">
+                        <!-- Quick info will be loaded here -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Related Cameras -->
+        <section class="related-section">
+            <h2>Related Cameras</h2>
+            <div class="related-grid" id="relatedCameras">
+                <!-- Related cameras will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Camera Manual Vault. Educational Use Only.</p>
+    </footer>
+
+    <script>
+        let currentCamera = null;
+        
+        // Get camera ID from URL
+        function getCameraId() {
+            const pathParts = window.location.pathname.split('/');
+            return pathParts[pathParts.length - 1];
+        }
+        
+        // Load camera details on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const cameraId = getCameraId();
+            if (cameraId) {
+                loadCameraDetails(cameraId);
+            }
+        });
+        
+        async function loadCameraDetails(cameraId) {
+            try {
+                const response = await fetch(`/api/camera/${cameraId}`);
+                if (!response.ok) {
+                    throw new Error('Camera not found');
+                }
+                
+                currentCamera = await response.json();
+                displayCameraDetails(currentCamera);
+                loadRelatedCameras(currentCamera);
+                
+            } catch (error) {
+                console.error('Error loading camera:', error);
+                document.getElementById('cameraTitle').textContent = 'Camera Not Found';
+                document.getElementById('cameraBrand').textContent = 'The requested camera could not be found.';
+                document.getElementById('cameraPrice').style.display = 'none';
+            }
+        }
+        
+        function displayCameraDetails(camera) {
+            // Update page title
+            document.getElementById('pageTitle').textContent = `${camera.fullName} - Camera Manual Vault`;
+            
+            // Update header info
+            document.getElementById('cameraTitle').textContent = camera.model;
+            document.getElementById('cameraBrand').textContent = camera.brand;
+            document.getElementById('breadcrumbName').textContent = camera.fullName;
+            
+            // Update price
+            if (camera.price) {
+                document.getElementById('cameraPrice').textContent = `$${camera.price.toLocaleString()}`;
+            } else {
+                document.getElementById('cameraPrice').textContent = 'Price not available';
+            }
+            
+            // Update badges
+            const badgesHtml = [];
+            if (camera.category) {
+                badgesHtml.push(`<span class="badge">${camera.category}</span>`);
+            }
+            if (camera.releaseYear) {
+                badgesHtml.push(`<span class="badge">${camera.releaseYear}</span>`);
+            }
+            if (camera.manualUrl) {
+                badgesHtml.push(`<span class="badge success">Manual Available</span>`);
+            }
+            document.getElementById('cameraBadges').innerHTML = badgesHtml.join('');
+            
+            // Update main image
+            document.getElementById('mainImage').src = camera.proxiedImageUrl || '/images/placeholder.jpg';
+            document.getElementById('mainImage').alt = camera.fullName;
+            
+            // Create thumbnails (for now, just one)
+            document.getElementById('thumbnails').innerHTML = `
+                <img src="${camera.proxiedImageUrl || '/images/placeholder.jpg'}" 
+                     alt="${camera.fullName}"
+                     class="thumbnail active"
+                     onclick="changeMainImage(this.src)">
+            `;
+            
+            // Update overview
+            const description = generateDescription(camera);
+            document.getElementById('cameraDescription').textContent = description;
+            
+            // Update key highlights
+            const highlights = generateHighlights(camera);
+            document.getElementById('keyHighlights').innerHTML = 
+                highlights.map(h => `<li style="margin-bottom: 0.75rem;">• ${h}</li>`).join('');
+            
+            // Update specifications
+            displaySpecs(camera.specs || {});
+            
+            // Update features
+            displayFeatures(camera.features || []);
+            
+            // Update quick info
+            displayQuickInfo(camera);
+            
+            // Update manual sections
+            updateManualSections(camera);
+        }
+        
+        function generateDescription(camera) {
+            let desc = `The ${camera.fullName} is a ${camera.category || 'camera'} from ${camera.brand}`;
+            if (camera.releaseYear) {
+                desc += `, released in ${camera.releaseYear}`;
+            }
+            desc += '. ';
+            
+            if (camera.specs?.sensor || camera.specs?.megapixels) {
+                desc += `It features ${camera.specs.megapixels || ''} ${camera.specs.sensor || 'sensor'}. `;
+            }
+            
+            if (camera.specs?.video) {
+                desc += `Video capabilities include ${camera.specs.video}. `;
+            }
+            
+            return desc;
+        }
+        
+        function generateHighlights(camera) {
+            const highlights = [];
+            
+            if (camera.specs?.megapixels) highlights.push(camera.specs.megapixels);
+            if (camera.specs?.sensor) highlights.push(camera.specs.sensor);
+            if (camera.specs?.video) highlights.push(`${camera.specs.video} video recording`);
+            if (camera.category) highlights.push(`${camera.category} design`);
+            if (camera.features?.length > 0) {
+                highlights.push(...camera.features.slice(0, 2));
+            }
+            
+            return highlights;
+        }
+        
+        function displaySpecs(specs) {
+            const specsGrid = document.getElementById('specsGrid');
+            
+            if (Object.keys(specs).length === 0) {
+                specsGrid.innerHTML = '<p style="color: var(--text-muted);">Specifications not available</p>';
+                return;
+            }
+            
+            // Group specs
+            const generalSpecs = [];
+            const videoSpecs = [];
+            
+            if (specs.sensor) generalSpecs.push({ label: 'Sensor', value: specs.sensor });
+            if (specs.megapixels) generalSpecs.push({ label: 'Resolution', value: specs.megapixels });
+            if (specs.video) videoSpecs.push({ label: 'Video', value: specs.video });
+            
+            let html = '';
+            
+            if (generalSpecs.length > 0) {
+                html += `
+                    <div class="spec-group">
+                        <h3>General</h3>
+                        ${generalSpecs.map(spec => `
+                            <div class="spec-item">
+                                <span class="spec-label">${spec.label}</span>
+                                <span class="spec-value">${spec.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            if (videoSpecs.length > 0) {
+                html += `
+                    <div class="spec-group">
+                        <h3>Video</h3>
+                        ${videoSpecs.map(spec => `
+                            <div class="spec-item">
+                                <span class="spec-label">${spec.label}</span>
+                                <span class="spec-value">${spec.value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            specsGrid.innerHTML = html;
+        }
+        
+        function displayFeatures(features) {
+            const featuresList = document.getElementById('featuresList');
+            
+            if (features.length === 0) {
+                featuresList.innerHTML = '<p style="color: var(--text-muted);">Features list not available</p>';
+                return;
+            }
+            
+            featuresList.innerHTML = features.map(feature => `
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>${feature}</span>
+                </div>
+            `).join('');
+        }
+        
+        function displayQuickInfo(camera) {
+            const quickInfo = document.getElementById('quickInfo');
+            
+            const info = [];
+            info.push({ label: 'Brand', value: camera.brand });
+            info.push({ label: 'Model', value: camera.model });
+            if (camera.category) info.push({ label: 'Type', value: camera.category });
+            if (camera.releaseYear) info.push({ label: 'Year', value: camera.releaseYear });
+            
+            quickInfo.innerHTML = info.map(item => `
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                    <span style="color: var(--text-muted);">${item.label}</span>
+                    <span>${item.value}</span>
+                </div>
+            `).join('');
+        }
+        
+        function updateManualSections(camera) {
+            const elements = [
+                { id: 'manualStatus', btn: 'manualTabBtn' },
+                { id: 'sidebarManualStatus', btn: 'sidebarManualBtn' }
+            ];
+            
+            elements.forEach(el => {
+                if (camera.manualUrl) {
+                    document.getElementById(el.id).textContent = 'Manual available';
+                    const btn = document.getElementById(el.btn);
+                    btn.style.display = 'inline-block';
+                    btn.onclick = () => window.open(camera.manualUrl, '_blank');
+                    
+                    // Also show main download button
+                    const mainBtn = document.getElementById('downloadManualBtn');
+                    mainBtn.style.display = 'inline-block';
+                    mainBtn.onclick = () => window.open(camera.manualUrl, '_blank');
+                } else {
+                    document.getElementById(el.id).textContent = 'Manual not yet available';
+                }
+            });
+        }
+        
+        async function loadRelatedCameras(camera) {
+            try {
+                const response = await fetch(`/api/cameras?brand=${camera.brand}&limit=4`);
+                const data = await response.json();
+                
+                const relatedCameras = data.cameras.filter(c => c.id !== camera.id).slice(0, 3);
+                
+                if (relatedCameras.length === 0) {
+                    document.getElementById('relatedCameras').innerHTML = 
+                        '<p style="color: var(--text-muted); text-align: center;">No related cameras found</p>';
+                    return;
+                }
+                
+                document.getElementById('relatedCameras').innerHTML = relatedCameras.map(cam => `
+                    <div class="related-card" onclick="window.location.href='/camera/${cam.id}'">
+                        <img src="${cam.proxiedImageUrl || '/images/placeholder.jpg'}" 
+                             alt="${cam.fullName}"
+                             class="related-image">
+                        <div class="related-info">
+                            <div class="related-brand">${cam.brand}</div>
+                            <h4 class="related-model">${cam.model}</h4>
+                            <div class="related-meta">
+                                ${cam.category || 'Camera'} • ${cam.releaseYear || 'N/A'}
+                                ${cam.price ? ` • $${cam.price.toLocaleString()}` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading related cameras:', error);
+            }
+        }
+        
+        function switchTab(tabName) {
+            // Remove active from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active to selected tab
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        function changeMainImage(src) {
+            document.getElementById('mainImage').src = src;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+                if (thumb.src === src) {
+                    thumb.classList.add('active');
+                }
+            });
+        }
+        
+        function shareCamera() {
+            if (navigator.share && currentCamera) {
+                navigator.share({
+                    title: currentCamera.fullName,
+                    text: `Check out the ${currentCamera.fullName} on Camera Manual Vault`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        }
+    </script>
+</body>
+</html>
