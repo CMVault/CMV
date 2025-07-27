@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Blog - Camera Manual Vault</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Blog Header */
+        .blog-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .blog-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blog-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Blog Search */
+        .blog-search-section {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            position: relative;
+        }
+
+        .search-container {
+            position: relative;
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .search-container.focused {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.2);
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .category-select {
+            background: var(--darker-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Blog Categories */
+        .category-pills {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .category-pill {
+            padding: 0.5rem 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .category-pill:hover,
+        .category-pill.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Blog Grid */
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .blog-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .blog-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--darker-bg);
+        }
+
+        .blog-content {
+            padding: 1.5rem;
+        }
+
+        .blog-category {
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .blog-excerpt {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .blog-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .blog-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+        }
+
+        /* Featured Post */
+        .featured-post {
+            background: var(--gradient-2);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-label {
+            background: rgba(0,0,0,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .featured-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .featured-excerpt {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+
+        .read-more-btn {
+            background: white;
+            color: var(--primary-color);
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .read-more-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Suggestions Dropdown */
+        .suggestions-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1000;
+        }
+
+        .suggestions-container.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .suggestion-item:hover {
+            background: var(--card-hover);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        .footer-disclaimer {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .blog-header h1 {
+                font-size: 2rem;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .featured-title {
+                font-size: 1.75rem;
+            }
+
+            .featured-post {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/camera-blog" class="active">Camera Blog</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Blog Header -->
+        <div class="blog-header">
+            <h1>Camera Blog</h1>
+            <p class="blog-subtitle">Reviews, tutorials, news, and insights from the camera community</p>
+        </div>
+
+        <!-- Blog Search -->
+        <div class="blog-search-section">
+            <div class="search-container" id="searchContainer">
+                <div class="search-wrapper">
+                    <input type="search" 
+                           id="searchInput"
+                           class="search-input" 
+                           placeholder="Search articles, reviews, tutorials..."
+                           autocomplete="off">
+                    <select class="category-select" id="categorySelect">
+                        <option value="">All Categories</option>
+                        <option value="reviews">Reviews</option>
+                        <option value="tutorials">Tutorials</option>
+                        <option value="news">News</option>
+                        <option value="tips">Tips & Tricks</option>
+                        <option value="comparisons">Comparisons</option>
+                    </select>
+                    <button class="search-btn" onclick="performSearch()">Search</button>
+                </div>
+                
+                <!-- Suggestions Dropdown -->
+                <div class="suggestions-container" id="suggestionsContainer">
+                    <!-- Blog-specific suggestions will appear here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="category-pills">
+            <a href="#" class="category-pill active" data-category="all">All Posts</a>
+            <a href="#" class="category-pill" data-category="reviews">📝 Reviews</a>
+            <a href="#" class="category-pill" data-category="tutorials">🎓 Tutorials</a>
+            <a href="#" class="category-pill" data-category="news">📰 News</a>
+            <a href="#" class="category-pill" data-category="tips">💡 Tips & Tricks</a>
+            <a href="#" class="category-pill" data-category="comparisons">⚖️ Comparisons</a>
+            <a href="#" class="category-pill" data-category="stories">📖 User Stories</a>
+        </div>
+
+        <!-- Featured Post -->
+        <div class="featured-post">
+            <span class="featured-label">Featured Article</span>
+            <h2 class="featured-title">The Complete Guide to Cinema Camera Workflows</h2>
+            <p class="featured-excerpt">
+                From pre-production planning to post-production color grading, learn the professional 
+                workflows used by top cinematographers in Hollywood productions.
+            </p>
+            <a href="/blog/cinema-workflow-guide" class="read-more-btn">Read Full Article</a>
+        </div>
+
+        <!-- Blog Grid -->
+        <div class="blog-grid" id="blogGrid">
+            <!-- Sample blog posts -->
+            <div class="blog-card" onclick="window.location.href='/blog/canon-r5-review'">
+                <img src="/images/blog/canon-r5-review.jpg" alt="Canon R5 Review" class="blog-image">
+                <div class="blog-content">
+                    <div class="blog-category">Review</div>
+                    <h3 class="blog-title">Canon EOS R5 Long-Term Review: 6 Months Later</h3>
+                    <p class="blog-excerpt">After 6 months of intensive use, here's our comprehensive review of the Canon R5's performance in real-world scenarios...</p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <div class="author-avatar"></div>
+                            <span>John Smith</span>
+                        </div>
+                        <span>5 min read</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="blog-card" onclick="window.location.href='/blog/low-light-tips'">
+                <img src="/images/blog/low-light.jpg" alt="Low Light Photography" class="blog-image">
+                <div class="blog-content">
+                    <div class="blog-category">Tutorial</div>
+                    <h3 class="blog-title">Master Low Light Photography: Pro Techniques</h3>
+                    <p class="blog-excerpt">Learn the secrets of capturing stunning images in challenging lighting conditions with these professional techniques...</p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <div class="author-avatar"></div>
+                            <span>Sarah Chen</span>
+                        </div>
+                        <span>8 min read</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="blog-card" onclick="window.location.href='/blog/sony-announcement'">
+                <img src="/images/blog/sony-news.jpg" alt="Sony News" class="blog-image">
+                <div class="blog-content">
+                    <div class="blog-category">News</div>
+                    <h3 class="blog-title">Breaking: Sony Announces Revolutionary New Sensor Technology</h3>
+                    <p class="blog-excerpt">Sony's latest announcement could change the future of digital imaging with their groundbreaking sensor innovation...</p>
+                    <div class="blog-meta">
+                        <div class="blog-author">
+                            <div class="author-avatar"></div>
+                            <span>Mike Johnson</span>
+                        </div>
+                        <span>3 min read</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/dmca">DMCA Policy</a>
+                <a href="/attribution">Image Attributions</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-disclaimer">
+                <p>© 2025 Camera Manual Vault. Educational Use Only. All camera images are property of their respective manufacturers and are used for educational purposes under fair use doctrine.</p>
+                <p>Product names, logos, brands, and other trademarks featured or referred to within Camera Manual Vault are the property of their respective trademark holders.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let searchQuery = '';
+        let selectedCategory = '';
+        
+        // Blog-specific search functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            setupCategoryFilters();
+        });
+        
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            const searchContainer = document.getElementById('searchContainer');
+            
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('focused');
+                if (searchInput.value.length > 0) {
+                    showBlogSuggestions();
+                }
+            });
+            
+            searchInput.addEventListener('blur', () => {
+                searchContainer.classList.remove('focused');
+                setTimeout(() => hideSuggestions(), 200);
+            });
+            
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                updateBlogSuggestions();
+            });
+            
+            document.getElementById('categorySelect').addEventListener('change', (e) => {
+                selectedCategory = e.target.value;
+                filterBlogPosts();
+            });
+        }
+        
+        function setupCategoryFilters() {
+            document.querySelectorAll('.category-pill').forEach(pill => {
+                pill.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Update active state
+                    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    
+                    // Filter posts
+                    const category = pill.dataset.category;
+                    filterBlogPosts(category);
+                });
+            });
+        }
+        
+        function updateBlogSuggestions() {
+            const query = searchQuery.trim();
+            
+            if (query.length === 0) {
+                hideSuggestions();
+                return;
+            }
+            
+            const suggestions = generateBlogSuggestions(query);
+            renderBlogSuggestions(suggestions);
+            showBlogSuggestions();
+        }
+        
+        function generateBlogSuggestions(query) {
+            const suggestions = [];
+            
+            // Blog post suggestions
+            suggestions.push({
+                type: 'article',
+                icon: '📄',
+                main: 'Canon R5 Long-Term Review',
+                sub: 'Review • 5 min read',
+                action: () => window.location.href = '/blog/canon-r5-review'
+            });
+            
+            // Topic suggestions
+            suggestions.push({
+                type: 'topic',
+                icon: '🏷️',
+                main: 'Low Light Photography',
+                sub: '12 articles on this topic',
+                action: () => filterByTopic('low-light')
+            });
+            
+            // Author suggestions
+            suggestions.push({
+                type: 'author',
+                icon: '✍️',
+                main: 'John Smith',
+                sub: '24 articles',
+                action: () => filterByAuthor('john-smith')
+            });
+            
+            return suggestions.filter(s => 
+                s.main.toLowerCase().includes(query) || 
+                s.sub.toLowerCase().includes(query)
+            );
+        }
+        
+        function renderBlogSuggestions(suggestions) {
+            const container = document.getElementById('suggestionsContainer');
+            
+            if (suggestions.length === 0) {
+                container.innerHTML = '<div class="suggestion-item">No articles found</div>';
+                return;
+            }
+            
+            container.innerHTML = suggestions.map(item => `
+                <div class="suggestion-item" onclick="${item.action ? 'executeBlogAction(' + suggestions.indexOf(item) + ')' : ''}">
+                    <span style="font-size: 1.2rem;">${item.icon}</span>
+                    <div>
+                        <div style="font-weight: 500;">${item.main}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">${item.sub}</div>
+                    </div>
+                </div>
+            `).join('');
+            
+            window.currentSuggestions = suggestions;
+        }
+        
+        function executeBlogAction(index) {
+            const suggestion = window.currentSuggestions[index];
+            if (suggestion && suggestion.action) {
+                suggestion.action();
+            }
+        }
+        
+        function showBlogSuggestions() {
+            document.getElementById('suggestionsContainer').classList.add('show');
+        }
+        
+        function hideSuggestions() {
+            document.getElementById('suggestionsContainer').classList.remove('show');
+        }
+        
+        function filterBlogPosts(category = 'all') {
+            // This would filter the actual blog posts
+            console.log('Filtering by category:', category);
+        }
+        
+        function filterByTopic(topic) {
+            console.log('Filtering by topic:', topic);
+            hideSuggestions();
+        }
+        
+        function filterByAuthor(author) {
+            console.log('Filtering by author:', author);
+            hideSuggestions();
+        }
+        
+        function performSearch() {
+            // Perform blog-specific search
+            console.log('Searching blog for:', searchQuery);
+        }
+    </script>
+</body>
+</html>
