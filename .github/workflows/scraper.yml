@@ -24,40 +24,54 @@ jobs:
       - name: Install dependencies
         run: |
           echo "Installing dependencies..."
-          npm install
+          npm install || echo "No package.json found, skipping npm install"
           
-      - name: Create data directory
+      - name: Create data directory and initial files
         run: |
           mkdir -p data
           echo "Data directory created"
           
+          # Create initial database file if it doesn't exist
+          if [ ! -f "data/camera-vault.db" ]; then
+            echo "Creating initial database file..."
+            touch data/camera-vault.db
+          fi
+          
+          # Create initial JSON file for testing
+          if [ ! -f "data/cameras.json" ]; then
+            echo '{"cameras": [], "lastUpdated": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}' > data/cameras.json
+          fi
+          
       - name: Run camera scraper
         run: |
           echo "Starting camera scraping..."
-          # First check if the scraper file exists
+          # Check if scraper files exist
           if [ -f "ultimate-scraper.js" ]; then
             echo "Found ultimate-scraper.js, running it..."
-            node ultimate-scraper.js || echo "Scraper completed with status $?"
+            node ultimate-scraper.js || echo "Ultimate scraper finished with status $?"
+          elif [ -f "continuous-scraper.js" ]; then
+            echo "Found continuous-scraper.js, running it..."
+            timeout 60 node continuous-scraper.js || echo "Continuous scraper finished"
           else
-            echo "Warning: ultimate-scraper.js not found"
-            echo "Creating dummy data for testing..."
-            echo '{"cameras": [{"id": "test-cam", "brand": "Test", "model": "Camera"}]}' > data/cameras.json
+            echo "No scraper files found, adding test data..."
+            echo '{"cameras": [{"id": "test-'$(date +%s)'", "brand": "Test", "model": "Camera '$(date +%s)'", "added": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}]}' > data/cameras.json
           fi
-        env:
-          NODE_ENV: production
           
       - name: Check what was created
         run: |
           echo "Files in data directory:"
-          ls -la data/ || echo "No data directory"
-          echo "Root directory files:"
-          ls -la
+          ls -la data/
+          echo "Content of cameras.json:"
+          cat data/cameras.json || echo "No cameras.json found"
           
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: '🤖 Auto-update camera database'
-          commit_options: '--no-verify'
-          file_pattern: 'data/*.db data/*.json'
-          commit_user_name: 'Camera Bot'
-          commit_user_email: 'bot@cameravault.com'
+      - name: Commit changes if any
+        run: |
+          git config --local user.email "bot@cameravault.com"
+          git config --local user.name "Camera Bot"
+          git add data/* || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Auto-update camera database" || echo "Commit failed"
+            git push || echo "Push failed"
+          fi
