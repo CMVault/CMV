@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productions - Cameras Used in Movies & TV</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--gradient-2);
+            margin-bottom: 3rem;
+        }
+
+        .hero-section h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Search Section */
+        .search-section {
+            max-width: 800px;
+            margin: -2rem auto 3rem;
+            position: relative;
+        }
+
+        .search-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 2px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            padding: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .filter-select {
+            background: var(--darker-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 0.75rem 2rem;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .category-tab:hover,
+        .category-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* Production Grid */
+        .productions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .production-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .production-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-color);
+        }
+
+        .production-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: var(--darker-bg);
+            position: relative;
+        }
+
+        .production-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .production-content {
+            padding: 1.5rem;
+        }
+
+        .production-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .production-year {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .production-details {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .camera-list {
+            margin-top: 1rem;
+        }
+
+        .camera-tag {
+            display: inline-block;
+            background: var(--darker-bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin: 0.25rem;
+            color: var(--secondary-color);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Featured Production */
+        .featured-production {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 4rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .featured-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .featured-info h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .featured-meta {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .featured-cameras {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .featured-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+
+            .productions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions" class="active">Productions</a></li>
+                    <li><a href="/camera-blog">Camera Blog</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1>🎬 Cameras Behind the Magic</h1>
+        <p class="hero-subtitle">Discover which cameras were used to create your favorite movies, TV shows, and documentaries</p>
+    </section>
+
+    <!-- Search Section -->
+    <div class="container">
+        <div class="search-section">
+            <div class="search-container">
+                <input type="search" class="search-input" placeholder="Search productions, directors, or cameras..." id="searchInput">
+                <select class="filter-select" id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="movie">Movies</option>
+                    <option value="tv">TV Shows</option>
+                    <option value="documentary">Documentaries</option>
+                    <option value="commercial">Commercials</option>
+                </select>
+                <button class="search-btn" onclick="searchProductions()">Search</button>
+            </div>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <a href="#" class="category-tab active" data-category="all">All Productions</a>
+            <a href="#" class="category-tab" data-category="trending">🔥 Trending</a>
+            <a href="#" class="category-tab" data-category="oscar">🏆 Oscar Winners</a>
+            <a href="#" class="category-tab" data-category="netflix">📺 Netflix Originals</a>
+            <a href="#" class="category-tab" data-category="cinema">🎭 Arthouse Cinema</a>
+        </div>
+
+        <!-- Featured Production -->
+        <div class="featured-production" id="featuredProduction">
+            <div class="featured-content">
+                <div class="featured-info">
+                    <span style="background: rgba(0,0,0,0.3); padding: 0.5rem 1rem; border-radius: 20px; display: inline-block; margin-bottom: 1rem;">Featured Production</span>
+                    <h2>Dune: Part Two</h2>
+                    <p class="featured-meta">2024 • Directed by Denis Villeneuve • Cinematography by Greig Fraser</p>
+                    <div class="featured-cameras">
+                        <h4 style="margin-bottom: 1rem;">Primary Cameras Used:</h4>
+                        <div>
+                            <span class="camera-tag">ARRI ALEXA LF</span>
+                            <span class="camera-tag">ARRI ALEXA Mini LF</span>
+                            <span class="camera-tag">ARRI ALEXA 65</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <img src="/images/dune-poster.jpg" alt="Dune Part Two" style="width: 300px; height: auto; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-card">
+                <span class="stat-number" id="totalProductions">2,847</span>
+                <span class="stat-label">Productions Tracked</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalCameras">485</span>
+                <span class="stat-label">Different Cameras</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalDirectors">1,293</span>
+                <span class="stat-label">Directors</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number" id="totalStudios">178</span>
+                <span class="stat-label">Studios & Networks</span>
+            </div>
+        </div>
+
+        <!-- Productions Grid -->
+        <div class="productions-grid" id="productionsGrid">
+            <!-- Sample Productions (will be populated by JavaScript) -->
+            <div class="production-card" onclick="viewProduction('oppenheimer')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">IMAX Film</span>
+                    <img src="/images/placeholder.jpg" alt="Oppenheimer" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">Oppenheimer</h3>
+                    <p class="production-year">2023 • Christopher Nolan</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Cinematographer:</span>
+                            <span class="detail-value">Hoyte van Hoytema</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Format:</span>
+                            <span class="detail-value">65mm & IMAX</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">Panavision 65mm</span>
+                        <span class="camera-tag">IMAX MSM 9802</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="production-card" onclick="viewProduction('the-batman')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">Digital</span>
+                    <img src="/images/placeholder.jpg" alt="The Batman" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">The Batman</h3>
+                    <p class="production-year">2022 • Matt Reeves</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Cinematographer:</span>
+                            <span class="detail-value">Greig Fraser</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Format:</span>
+                            <span class="detail-value">Digital</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">ARRI ALEXA LF</span>
+                        <span class="camera-tag">RED Ranger Monstro</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="production-card" onclick="viewProduction('stranger-things')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">TV Series</span>
+                    <img src="/images/placeholder.jpg" alt="Stranger Things" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">Stranger Things</h3>
+                    <p class="production-year">2016-2025 • The Duffer Brothers</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Network:</span>
+                            <span class="detail-value">Netflix</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Seasons:</span>
+                            <span class="detail-value">5 Seasons</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">RED Weapon Dragon</span>
+                        <span class="camera-tag">RED Monstro</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="production-card" onclick="viewProduction('1917')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">One-Shot Film</span>
+                    <img src="/images/placeholder.jpg" alt="1917" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">1917</h3>
+                    <p class="production-year">2019 • Sam Mendes</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Cinematographer:</span>
+                            <span class="detail-value">Roger Deakins</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Format:</span>
+                            <span class="detail-value">Digital</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">ARRI ALEXA Mini LF</span>
+                        <span class="camera-tag">ARRI Trinity</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="production-card" onclick="viewProduction('parasite')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">Oscar Winner</span>
+                    <img src="/images/placeholder.jpg" alt="Parasite" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">Parasite</h3>
+                    <p class="production-year">2019 • Bong Joon-ho</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Cinematographer:</span>
+                            <span class="detail-value">Hong Kyung-pyo</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Awards:</span>
+                            <span class="detail-value">Best Picture</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">ARRI ALEXA 65</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="production-card" onclick="viewProduction('mandalorian')">
+                <div class="production-image" style="position: relative;">
+                    <span class="production-badge">Virtual Production</span>
+                    <img src="/images/placeholder.jpg" alt="The Mandalorian" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="production-content">
+                    <h3 class="production-title">The Mandalorian</h3>
+                    <p class="production-year">2019-Present • Jon Favreau</p>
+                    <div class="production-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Network:</span>
+                            <span class="detail-value">Disney+</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tech:</span>
+                            <span class="detail-value">StageCraft LED</span>
+                        </div>
+                    </div>
+                    <div class="camera-list">
+                        <span class="camera-tag">ARRI ALEXA LF</span>
+                        <span class="camera-tag">ARRI ALEXA Mini</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load More Button -->
+        <div style="text-align: center; margin: 3rem 0;">
+            <button class="search-btn" onclick="loadMoreProductions()">Load More Productions</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/attribution">Image Attributions</a>
+            <a href="/legal">Legal Disclaimer</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">
+            © 2025 Camera Manual Vault. Educational Use Only.
+        </p>
+    </footer>
+
+    <script>
+        // Category tab functionality
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Update active state
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Filter productions (would connect to backend)
+                const category = tab.dataset.category;
+                filterByCategory(category);
+            });
+        });
+
+        function searchProductions() {
+            const query = document.getElementById('searchInput').value;
+            const type = document.getElementById('typeFilter').value;
+            console.log('Searching for:', query, 'Type:', type);
+            // Would implement actual search
+        }
+
+        function filterByCategory(category) {
+            console.log('Filtering by category:', category);
+            // Would implement actual filtering
+        }
+
+        function viewProduction(id) {
+            console.log('Viewing production:', id);
+            // Would navigate to production detail page
+        }
+
+        function loadMoreProductions() {
+            console.log('Loading more productions...');
+            // Would load more from API
+        }
+
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateNumber(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.stat-number').forEach(stat => {
+            observer.observe(stat);
+        });
+
+        function animateNumber(element) {
+            const target = parseInt(element.textContent.replace(/,/g, ''));
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = current.toLocaleString();
+            }, 30);
+        }
+    </script>
+</body>
+</html>
