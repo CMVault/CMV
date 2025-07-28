@@ -101,6 +101,17 @@ class CameraVaultServer {
     this.app.get('/images/cameras/:filename', this.serveCachedImage.bind(this));
     this.app.post('/api/camera-finder', this.cameraFinder.bind(this));
     this.app.get('/camera/:id', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'camera-detail.html')); });
+    // Camera Blog route
+    this.app.get('/camera-blog', (req, res) => {
+      res.sendFile(path.join(__dirname, 'public', 'camera-blog.html'));
+    });
+
+    // Legal pages routes
+    this.app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
+    this.app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'terms.html')));
+    this.app.get('/dmca', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dmca.html')));
+    this.app.get('/attribution', (req, res) => res.sendFile(path.join(__dirname, 'public', 'attribution.html')));
+    this.app.get('/legal', (req, res) => res.sendFile(path.join(__dirname, 'public', 'legal.html')));
   }
 
   async imageProxy(req, res) {
