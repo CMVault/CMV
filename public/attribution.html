@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Attributions - Camera Manual Vault</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .legal-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .attribution-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin: 2rem 0 1rem;
+            font-size: 1.75rem;
+        }
+
+        .attribution-table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 10px;
+            background: var(--darker-bg);
+        }
+
+        .attribution-table th {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .attribution-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .attribution-table tr:hover {
+            background: var(--card-hover);
+        }
+
+        .attribution-table a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .attribution-table a:hover {
+            text-decoration: underline;
+        }
+
+        .notice-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .notice-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .legal-header h1 {
+                font-size: 2rem;
+            }
+
+            .attribution-table {
+                font-size: 0.9rem;
+            }
+
+            .attribution-table th,
+            .attribution-table td {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/camera-blog">Camera Blog</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="legal-header">
+            <h1>Image Attributions</h1>
+            <p class="last-updated">Last Updated: July 28, 2025</p>
+        </div>
+
+        <div class="attribution-content">
+            <h2>📷 About Our Images</h2>
+            <p>Camera Manual Vault uses images from various sources for educational purposes. We believe in transparency and proper attribution. All images remain the property of their respective copyright holders.</p>
+
+            <div class="notice-box">
+                <h3>⚠️ Fair Use Notice</h3>
+                <p>Images on this site are used for educational and informational purposes under fair use doctrine. We do not claim ownership of any manufacturer images or logos.</p>
+            </div>
+
+            <h2>📋 Image Sources & Attribution</h2>
+            
+            <table class="attribution-table">
+                <thead>
+                    <tr>
+                        <th>Image Type</th>
+                        <th>Source</th>
+                        <th>Usage</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Camera Product Images</td>
+                        <td>Manufacturer Websites</td>
+                        <td>Educational Display</td>
+                        <td><a href="#manufacturers">See List Below</a></td>
+                    </tr>
+                    <tr>
+                        <td>Camera Icons</td>
+                        <td>Unicode Emoji</td>
+                        <td>UI Elements</td>
+                        <td>Public Domain</td>
+                    </tr>
+                    <tr>
+                        <td>Placeholder Images</td>
+                        <td>Self-Created</td>
+                        <td>Fallback Display</td>
+                        <td>Original Content</td>
+                    </tr>
+                    <tr>
+                        <td>Manual Covers</td>
+                        <td>Manufacturer PDFs</td>
+                        <td>Reference Only</td>
+                        <td>Various Sources</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="manufacturers">🏢 Manufacturer Attributions</h2>
+            <p>We source camera images from the following manufacturers for educational purposes:</p>
+
+            <table class="attribution-table">
+                <thead>
+                    <tr>
+                        <th>Manufacturer</th>
+                        <th>Website</th>
+                        <th>Trademark Notice</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Canon Inc.</td>
+                        <td><a href="https://www.canon.com" target="_blank">canon.com</a></td>
+                        <td>Canon is a registered trademark of Canon Inc.</td>
+                    </tr>
+                    <tr>
+                        <td>Nikon Corporation</td>
+                        <td><a href="https://www.nikon.com" target="_blank">nikon.com</a></td>
+                        <td>Nikon is a registered trademark of Nikon Corporation</td>
+                    </tr>
+                    <tr>
+                        <td>Sony Corporation</td>
+                        <td><a href="https://www.sony.com" target="_blank">sony.com</a></td>
+                        <td>Sony is a registered trademark of Sony Corporation</td>
+                    </tr>
+                    <tr>
+                        <td>Fujifilm Holdings</td>
+                        <td><a href="https://www.fujifilm.com" target="_blank">fujifilm.com</a></td>
+                        <td>Fujifilm is a registered trademark of Fujifilm Holdings</td>
+                    </tr>
+                    <tr>
+                        <td>Panasonic Corporation</td>
+                        <td><a href="https://www.panasonic.com" target="_blank">panasonic.com</a></td>
+                        <td>Panasonic is a registered trademark of Panasonic Corporation</td>
+                    </tr>
+                    <tr>
+                        <td>Olympus Corporation</td>
+                        <td><a href="https://www.olympus.com" target="_blank">olympus.com</a></td>
+                        <td>Olympus is a registered trademark of Olympus Corporation</td>
+                    </tr>
+                    <tr>
+                        <td>Leica Camera AG</td>
+                        <td><a href="https://www.leica-camera.com" target="_blank">leica-camera.com</a></td>
+                        <td>Leica is a registered trademark of Leica Camera AG</td>
+                    </tr>
+                    <tr>
+                        <td>Hasselblad</td>
+                        <td><a href="https://www.hasselblad.com" target="_blank">hasselblad.com</a></td>
+                        <td>Hasselblad is a registered trademark of Hasselblad</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>⚖️ Legal Compliance</h2>
+            <p>We take copyright seriously and strive to comply with all applicable laws:</p>
+            <ul style="margin-left: 2rem; color: var(--text-secondary);">
+                <li>All images are cached and served through our proxy system</li>
+                <li>We maintain records of image sources for transparency</li>
+                <li>Images are optimized and resized for educational display</li>
+                <li>We do not sell or profit from these images</li>
+                <li>Original sources are credited where possible</li>
+            </ul>
+
+            <h2>📧 Copyright Concerns</h2>
+            <p>If you are a copyright holder and have concerns about image usage:</p>
+            <ol style="margin-left: 2rem; color: var(--text-secondary);">
+                <li>Please review our <a href="/dmca" style="color: var(--secondary-color);">DMCA Policy</a></li>
+                <li>Contact us with specific image URLs</li>
+                <li>We will promptly address any legitimate concerns</li>
+                <li>We respect all intellectual property rights</li>
+            </ol>
+
+            <div class="notice-box" style="margin-top: 3rem;">
+                <h3>📝 Attribution Updates</h3>
+                <p>This page is regularly updated as new images are added to our database. For real-time attribution data, images served through our proxy system include source information in HTTP headers.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/attribution">Image Attributions</a>
+            <a href="/legal">Legal Disclaimer</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">
+            © 2025 Camera Manual Vault. Educational Use Only.
+        </p>
+    </footer>
+</body>
+</html>
