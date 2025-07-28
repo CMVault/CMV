@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Disclaimer - Camera Manual Vault</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .legal-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .legal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin: 2.5rem 0 1rem;
+            font-size: 1.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 1rem 0 1rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .notice-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .notice-box h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        .warning-box {
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .warning-box h3 {
+            margin-top: 0;
+            color: #f39c12;
+        }
+
+        .footer {
+            background: var(--darker-bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .legal-header h1 {
+                font-size: 2rem;
+            }
+
+            .legal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/camera-blog">Camera Blog</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="legal-header">
+            <h1>Legal Disclaimer</h1>
+            <p class="last-updated">Last Updated: July 28, 2025</p>
+        </div>
+
+        <div class="legal-content">
+            <div class="notice-box">
+                <h3>IMPORTANT LEGAL NOTICE</h3>
+                <p>Camera Manual Vault is an experimental educational project. All information is provided "as is" without any warranties, express or implied.</p>
+            </div>
+
+            <h2>1. No Warranties</h2>
+            <p>
+                This website is provided without any representations or warranties of any kind. We make no representations or warranties regarding this website or the information and materials provided on it.
+            </p>
+            <p>
+                Without prejudice to the generality of the foregoing, we do not warrant that:
+            </p>
+            <ul>
+                <li>This website will be constantly available, or available at all</li>
+                <li>The information on this website is complete, true, accurate or non-misleading</li>
+                <li>Any manuals or documents are current or correct</li>
+                <li>Camera specifications are accurate</li>
+                <li>Prices reflect current market values</li>
+            </ul>
+
+            <h2>2. Limitations of Liability</h2>
+            <p>
+                Camera Manual Vault will not be liable to you (whether under contract, tort, or otherwise) for any damages whatsoever, including without limitation:
+            </p>
+            <ul>
+                <li>Any direct, indirect or consequential loss</li>
+                <li>Loss of income or revenue</li>
+                <li>Loss of business or contracts</li>
+                <li>Loss of anticipated savings</li>
+                <li>Loss of data</li>
+                <li>Loss of goodwill</li>
+                <li>Wasted time</li>
+            </ul>
+
+            <h2>3. Educational Purpose Only</h2>
+            <p>
+                This website exists solely for educational and informational purposes. Information should not be relied upon for purchasing decisions, technical specifications, or any critical applications.
+            </p>
+
+            <h2>4. Experimental Nature</h2>
+            <p>
+                Camera Manual Vault is an experimental project. Features may be added, removed, or modified without notice. The website may become unavailable at any time.
+            </p>
+
+            <h2>5. Third-Party Content</h2>
+            <p>
+                We display content from various sources. We do not endorse, verify, or take responsibility for third-party content, including but not limited to:
+            </p>
+            <ul>
+                <li>Camera images from manufacturers</li>
+                <li>Manual documents</li>
+                <li>Specifications from external sources</li>
+                <li>User-submitted content</li>
+                <li>Linked websites</li>
+            </ul>
+
+            <h2>6. Intellectual Property</h2>
+            <p>
+                All trademarks, logos, and brand names displayed are property of their respective owners. Use of these marks does not imply endorsement or affiliation.
+            </p>
+
+            <h2>7. Technical Issues</h2>
+            <p>
+                We do not guarantee that:
+            </p>
+            <ul>
+                <li>The website will be error-free</li>
+                <li>Defects will be corrected</li>
+                <li>The website or server are free of viruses or bugs</li>
+                <li>Full functionality will be available</li>
+            </ul>
+
+            <h2>8. User Responsibility</h2>
+            <p>
+                Users are responsible for:
+            </p>
+            <ul>
+                <li>Verifying all information independently</li>
+                <li>Ensuring their use complies with applicable laws</li>
+                <li>Taking precautions against viruses</li>
+                <li>Backing up their own data</li>
+            </ul>
+
+            <h2>9. Indemnification</h2>
+            <p>
+                You agree to indemnify and hold harmless Camera Manual Vault from any claims, damages, losses, or expenses arising from your use of the website.
+            </p>
+
+            <h2>10. Severability</h2>
+            <p>
+                If any provision of this disclaimer is found to be unenforceable, the remaining provisions shall continue in effect.
+            </p>
+
+            <h2>11. Entire Agreement</h2>
+            <p>
+                This disclaimer, along with our Terms of Service and Privacy Policy, constitutes the entire agreement between you and Camera Manual Vault.
+            </p>
+
+            <h2>12. No Advice</h2>
+            <p>
+                Nothing on this website constitutes professional advice of any kind. Always consult appropriate professionals for specific guidance.
+            </p>
+
+            <div class="warning-box">
+                <h3>⚠️ USE AT YOUR OWN RISK</h3>
+                <p>By using Camera Manual Vault, you acknowledge that you have read, understood, and agree to this Legal Disclaimer. If you do not agree, please discontinue use immediately.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/attribution">Image Attributions</a>
+            <a href="/legal">Legal Disclaimer</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">
+            © 2025 Camera Manual Vault. Educational Use Only.
+        </p>
+    </footer>
+</body>
+</html>
