@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Camera Manual Vault</title>
+    <style>
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --card-bg: #1a1a1a;
+            --card-hover: #252525;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #666666;
+            --border-color: #333333;
+            --success-color: #4CAF50;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .legal-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .last-updated {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .legal-content {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 3rem;
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin: 2.5rem 0 1rem;
+            font-size: 1.75rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 1rem 0 1rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .notice-box {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .notice-box h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--darker-bg);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .legal-header h1 {
+                font-size: 2rem;
+            }
+
+            .legal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span>📸</span>
+                <span>Camera Manual Vault</span>
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/cameras">Cameras</a></li>
+                    <li><a href="/camera-finder">Camera Finder</a></li>
+                    <li><a href="/productions">Productions</a></li>
+                    <li><a href="/camera-blog">Camera Blog</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="legal-header">
+            <h1>Privacy Policy</h1>
+            <p class="last-updated">Last Updated: July 28, 2025</p>
+        </div>
+
+        <div class="legal-content">
+            <div class="notice-box">
+                <h3>DISCLAIMER</h3>
+                <p>This website is provided "as is" without any representations or warranties. We make no commitments regarding data handling, security, or availability.</p>
+            </div>
+
+            <h2>1. Information Collection</h2>
+            <p>
+                This website may collect:
+            </p>
+            <ul>
+                <li>IP addresses</li>
+                <li>Browser information</li>
+                <li>Page visits</li>
+                <li>Search queries</li>
+                <li>Account information</li>
+                <li>User-submitted content</li>
+                <li>Any other data necessary for operation</li>
+            </ul>
+
+            <h2>2. Use of Information</h2>
+            <p>
+                Information may be used for any purpose, including but not limited to:
+            </p>
+            <ul>
+                <li>Website operation</li>
+                <li>Feature development</li>
+                <li>Analytics</li>
+                <li>Debugging</li>
+                <li>Any other purpose deemed necessary</li>
+            </ul>
+
+            <h2>3. Third Parties</h2>
+            <p>
+                This website uses third-party services. We do not control their data practices.
+            </p>
+
+            <h2>4. Cookies</h2>
+            <p>
+                This website uses cookies and similar technologies. Disabling cookies may impair functionality.
+            </p>
+
+            <h2>5. Security</h2>
+            <p>
+                No security measures are guaranteed. Use at your own risk.
+            </p>
+
+            <h2>6. Data Rights</h2>
+            <p>
+                We make no commitments regarding data access, deletion, or portability requests.
+            </p>
+
+            <h2>7. Children</h2>
+            <p>
+                This website is not intended for children under 13.
+            </p>
+
+            <h2>8. International Use</h2>
+            <p>
+                This website operates from the United States. International users consent to data transfer to the US.
+            </p>
+
+            <h2>9. Changes</h2>
+            <p>
+                This policy may change without notice.
+            </p>
+
+            <h2>10. Contact</h2>
+            <p>
+                No response to inquiries is guaranteed.
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="/dmca">DMCA Policy</a>
+            <a href="/attribution">Image Attributions</a>
+            <a href="/legal">Legal Disclaimer</a>
+            <a href="/contact">Contact</a>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">
+            © 2025 Camera Manual Vault. Educational Use Only.
+        </p>
+    </footer>
+</body>
+</html>
