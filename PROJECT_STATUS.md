@@ -1,9 +1,9 @@
 # PROJECT STATUS - Camera Manual Vault
 
-## Last Updated: July 28, 2025, 1:50 AM PST
+## Last Updated: July 28, 2025, 2:15 AM PST
 
 ## 🎯 Current Task:
-- Create new legal pages (privacy, terms, DMCA, legal)
+- Creating legal pages (privacy ✅, terms, DMCA, legal)
 - Build real camera scraper
 
 ## ✅ Completed Today:
@@ -20,21 +20,21 @@
 - Renamed "Forum" to "Camera Blog"
 - Created Camera Blog page with blog-specific search
 - Made each section's search independent
-- **Updated navigation on ALL pages** ✅
-- **Added camera-blog route to server.js** ✅
-- **Added legal page routes to server.js** ✅
-- **Deleted search.html** ✅
-- **Created and uploaded placeholder.jpg** ✅
-- **Created and uploaded attribution.html** ✅
-- **Created and uploaded productions.html** ✅
-- **Created and uploaded login.html** ✅
-- **Created and uploaded camera-blog.html** ✅
+- Updated navigation on ALL pages ✅
+- Added camera-blog route to server.js ✅
+- Added legal page routes to server.js ✅
+- Deleted search.html ✅
+- Created and uploaded placeholder.jpg ✅
+- Created and uploaded attribution.html ✅
+- Created and uploaded productions.html ✅
+- Created and uploaded login.html ✅
+- Created and uploaded camera-blog.html ✅
+- **Created privacy.html with proper legal tone** ✅
 
 ## 🔄 In Progress:
-- Creating new legal pages (user wants fresh versions)
+- Creating remaining legal pages (terms, dmca, legal)
 
 ## ❌ Still Need:
-- Create and upload privacy.html
 - Create and upload terms.html
 - Create and upload dmca.html
 - Create and upload legal.html
@@ -50,7 +50,7 @@
 - Contact page (referenced in footer)
 
 ## 🐛 Active Issues:
-- Legal pages need to be created fresh (privacy, terms, dmca, legal)
+- Legal pages need to be created (3 remaining)
 - Only one camera in database (need real scraper)
 - Login functionality is just a demo (no backend auth)
 - Signup and forgot password pages don't exist
@@ -68,9 +68,10 @@
 - ✅ Created and uploaded productions.html
 - ✅ Created and uploaded login.html
 - ✅ Created and uploaded camera-blog.html
+- ✅ **Created privacy.html**
 
 ## 💡 Next Session:
-Start with: Creating fresh legal pages (privacy, terms, dmca, legal)
+Start with: Creating terms.html following the same legal page rules
 
 ## 🚀 New Ideas to Explore:
 - Auto-scraping system running 24/7 via GitHub Actions (ready, just needs scraper files)
@@ -119,95 +120,20 @@ Start with: Creating fresh legal pages (privacy, terms, dmca, legal)
 - Guest author submissions
 - Blog search filters by date/author/category
 - Featured authors section
-- **Camera comparison matrix tool**
-- **Quick spec comparison widget**
-- **Camera evolution timeline**
-- **Brand history sections**
-- **Production crew database** (link cinematographers to their gear)
-- **Streaming platform filter** (see what cameras Netflix/HBO/Disney+ use)
-- **Camera rental locator** (find where to rent specific cameras)
-- **Lens database** (companion to camera database)
-- **Accessories compatibility checker**
-- **Budget calculator for full rigs**
-- **Camera insurance estimator**
-- **Depreciation tracker**
-- **Gear recommendation engine based on shooting style**
+- Camera comparison matrix tool
+- Quick spec comparison widget
+- Camera evolution timeline
+- Brand history sections
+- Production crew database (link cinematographers to their gear)
+- Streaming platform filter (see what cameras Netflix/HBO/Disney+ use)
+- Camera rental locator (find where to rent specific cameras)
+- Lens database (companion to camera database)
+- Accessories compatibility checker
+- Budget calculator for full rigs
+- Camera insurance estimator
+- Depreciation tracker
+- Gear recommendation engine based on shooting style
 
 ## 📝 Important Notes:
 - GitHub Actions scraper is WORKING - runs every 6 hours
-- Currently only creates test data (Canon R5) to avoid clutter
-- Will add real scraper after site is complete
-- **ALL pages now use dark theme for consistency!** ✅
-- **Each section has its own isolated search** ✅
-- **Camera search won't show blog posts** ✅
-- **Blog search won't show cameras** ✅
-- **Navigation is now consistent across ALL pages** ✅
-- **All routes are properly configured in server.js** ✅
-- **Placeholder image system is working** ✅
-- **User decided not to use previous legal pages - wants new ones** ❗
-- **Productions page is uploaded and working** ✅
-- **Login page is uploaded and working** ✅
-- **Camera Blog is uploaded and working** ✅
-- **Attribution page is uploaded and working** ✅
-
-## 🤖 Automation System
-- Status: ACTIVE ✅
-- Scraper: WORKING (test mode) ✅
-- Instructions: See CLAUDE_AUTOMATION.md
-- Usage: Say "start cmv automation" in any Claude chat
-- Session: July 28, 2025 session (1:50 AM)
-- Progress: Most pages uploaded, need fresh legal pages
-
-## 📋 Completed Features:
-- **Advanced Search Bar**: Type-ahead suggestions for cameras, brands, and features ✅
-- **Integrated Filters**: Dropdown filters attached to search bar ✅
-- **Auto-complete**: Smart suggestions based on user input ✅
-- **Keyboard Navigation**: Arrow keys and Enter to select suggestions ✅
-- **Dynamic Tag System**: Comprehensive tagging for better search ✅
-- **Hidden Tags**: Clean UI with optional tag viewing ✅
-- **Legal Compliance**: Full disclaimers and attribution links ✅
-- **2025 Updates**: Current year throughout the site ✅
-- **Section-Specific Search**: Each section searches only its own content ✅
-- **Camera Blog**: New section with dedicated search ✅
-- **Consistent Navigation**: All pages have the same nav structure ✅
-- **Image Proxy System**: Working with attribution tracking ✅
-- **Placeholder System**: Default image for missing camera photos ✅
-- **Productions Database**: Page for tracking cameras in movies/TV ✅
-- **User Login**: Authentication page ready for backend ✅
-- **Attribution Page**: Complete image attribution system ✅
-
-## 🔧 IMMEDIATE NEXT STEPS:
-
-### 1. Create New Legal Pages
-Need to create fresh versions of:
-- [ ] privacy.html - Privacy Policy
-- [ ] terms.html - Terms of Service
-- [ ] dmca.html - DMCA Policy
-- [ ] legal.html - Full Legal Disclaimer
-
-### 2. Create Missing Pages
-- [ ] signup.html - User registration
-- [ ] forgot-password.html - Password reset
-- [ ] contact.html - Contact form
-- [ ] dashboard.html - User dashboard
-
-### 3. Test All Pages
-Verify each uploaded page loads correctly:
-- [x] Test / (homepage)
-- [x] Test /cameras
-- [x] Test /camera-finder
-- [x] Test /camera-blog ✅
-- [x] Test /productions ✅
-- [x] Test /login ✅
-- [x] Test /attribution ✅
-- [ ] Test /privacy (needs creation)
-- [ ] Test /terms (needs creation)
-- [ ] Test /dmca (needs creation)
-- [ ] Test /legal (needs creation)
-
-### 4. Create Real Scraper
-- [ ] Create ultimate-scraper.js with actual camera data sources
-- [ ] Test scraper locally first
-- [ ] Deploy and let GitHub Actions run it
-
-## 📊 Current Site Structure:
+- Currently
