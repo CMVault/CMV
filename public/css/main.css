@@ -5,6 +5,7 @@
    Copy this EXACTLY for consistent design.
    ============================================ */
 
+/* === VARIABLES START === */
 /* ===========================================
    1. CSS VARIABLES (Required for all pages)
    =========================================== */
@@ -51,7 +52,9 @@
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
+/* === VARIABLES END === */
 
+/* === BASE STYLES START === */
 /* ===========================================
    2. BASE STYLES (Required foundation)
    =========================================== */
@@ -70,7 +73,9 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+/* === BASE STYLES END === */
 
+/* === TYPOGRAPHY START === */
 /* ===========================================
    3. TYPOGRAPHY (Use these exactly)
    =========================================== */
@@ -102,7 +107,9 @@ a:hover {
     color: var(--secondary-blue);
     text-decoration: underline;
 }
+/* === TYPOGRAPHY END === */
 
+/* === LAYOUT START === */
 /* ===========================================
    4. LAYOUT COMPONENTS (Required structure)
    =========================================== */
@@ -126,7 +133,9 @@ a:hover {
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 .grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+/* === LAYOUT END === */
 
+/* === HEADER START === */
 /* ===========================================
    5. HEADER (Must match exactly)
    =========================================== */
@@ -181,7 +190,9 @@ a:hover {
     background-color: rgba(255, 255, 255, 0.1);
     text-decoration: none;
 }
+/* === HEADER END === */
 
+/* === BUTTONS START === */
 /* ===========================================
    6. BUTTONS (Use these classes)
    =========================================== */
@@ -219,7 +230,9 @@ a:hover {
     border-color: var(--primary-red);
     color: var(--primary-red);
 }
+/* === BUTTONS END === */
 
+/* === CARDS START === */
 /* ===========================================
    7. CARDS (Standard card design)
    =========================================== */
@@ -254,7 +267,9 @@ a:hover {
     font-size: 0.875rem;
     margin-bottom: var(--spacing-md);
 }
+/* === CARDS END === */
 
+/* === FORMS START === */
 /* ===========================================
    8. FORMS (Consistent form styling)
    =========================================== */
@@ -285,7 +300,9 @@ a:hover {
     outline: none;
     border-color: var(--primary-red);
 }
+/* === FORMS END === */
 
+/* === FOOTER START === */
 /* ===========================================
    9. FOOTER (Must match exactly)
    =========================================== */
@@ -324,7 +341,9 @@ a:hover {
     opacity: 1;
     text-decoration: none;
 }
+/* === FOOTER END === */
 
+/* === UTILITIES START === */
 /* ===========================================
    10. UTILITY CLASSES (Use these helpers)
    =========================================== */
@@ -369,7 +388,9 @@ a:hover {
     border-radius: var(--radius-sm);
     margin-bottom: var(--spacing-lg);
 }
+/* === UTILITIES END === */
 
+/* === RESPONSIVE START === */
 /* ===========================================
    11. RESPONSIVE DESIGN
    =========================================== */
@@ -394,6 +415,7 @@ a:hover {
         grid-template-columns: 1fr;
     }
 }
+/* === RESPONSIVE END === */
 
 /* ===========================================
    END OF STYLE GUIDE
