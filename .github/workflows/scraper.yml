@@ -1,91 +1,34 @@
-name: Auto Camera Scraper
+name: Continuous Camera Scraper
 
 on:
   schedule:
-    # Run every 6 hours
-    - cron: '0 */6 * * *'
-  workflow_dispatch:  # Allow manual trigger from GitHub UI
-  push:
-    branches: [main]  # Also run on pushes to test
-
-permissions:
-  contents: write  # IMPORTANT: This gives the workflow permission to push changes
+    - cron: '0 */6 * * *'  # Run every 6 hours
+  workflow_dispatch:  # Allow manual trigger
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
         
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          
-      - name: Install dependencies
-        run: |
-          echo "Installing dependencies..."
-          npm install || echo "No package.json found, skipping npm install"
-          
-      - name: Create data directory and initial files
-        run: |
-          mkdir -p data
-          echo "Data directory created"
-          
-          # Create initial database file if it doesn't exist
-          if [ ! -f "data/camera-vault.db" ]; then
-            echo "Creating initial database file..."
-            echo "SQLite format 3" > data/camera-vault.db
-          fi
-          
-          # Create initial JSON file with test camera
-          echo '{
-            "cameras": [
-              {
-                "id": "canon-r5-test",
-                "brand": "Canon",
-                "model": "EOS R5",
-                "fullName": "Canon EOS R5",
-                "category": "mirrorless",
-                "releaseYear": 2020,
-                "price": 3899
-              }
-            ],
-            "lastUpdated": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
-          }' > data/cameras.json
-          
-      - name: Run camera scraper
-        run: |
-          echo "Starting camera scraping..."
-          # Check if scraper files exist
-          if [ -f "ultimate-scraper.js" ]; then
-            echo "Found ultimate-scraper.js, running it..."
-            node ultimate-scraper.js || echo "Ultimate scraper finished with status $?"
-          elif [ -f "continuous-scraper.js" ]; then
-            echo "Found continuous-scraper.js, running it for 30 seconds..."
-            timeout 30 node continuous-scraper.js || echo "Continuous scraper finished"
-          else
-            echo "No scraper files found, using test data..."
-          fi
-          
-      - name: List created files
-        run: |
-          echo "Root directory:"
-          ls -la
-          echo ""
-          echo "Data directory:"
-          ls -la data/ || echo "No data directory found"
-          
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: '🤖 Auto-update camera database'
-          commit_options: '--no-verify'
-          file_pattern: 'data/*'
-          commit_user_name: 'Camera Bot'
-          commit_user_email: 'bot@cameravault.com'
-          create_branch: false
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run scraper
+      run: node continuous-scraper.js
+      env:
+        NODE_ENV: production
+        
+    - name: Commit changes
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add data/
+        git diff --staged --quiet || git commit -m "Auto-update camera data"
+        git push
