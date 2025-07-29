@@ -15,12 +15,12 @@ jobs:
         with:
           path: main-repo
           
-      - name: Checkout structure repo
-        uses: actions/checkout@v3
-        with:
-          repository: CMVault/cmv-structure
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: structure-repo
+     - name: Checkout structure repo
+  uses: actions/checkout@v3
+  with:
+    repository: CMVault/cmv-structure
+    token: ${{ secrets.CMV_STRUCTURE_TOKEN }}  # ← CHANGE THIS LINE
+    path: structure-repo
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
