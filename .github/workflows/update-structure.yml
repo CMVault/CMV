@@ -15,12 +15,12 @@ jobs:
         with:
           path: main-repo
           
-     - name: Checkout structure repo
-  uses: actions/checkout@v3
-  with:
-    repository: CMVault/cmv-structure
-    token: ${{ secrets.CMV_STRUCTURE_TOKEN }}  # ← CHANGE THIS LINE
-    path: structure-repo
+      - name: Checkout structure repo
+        uses: actions/checkout@v3
+        with:
+          repository: CMVault/cmv-structure
+          token: ${{ secrets.CMV_STRUCTURE_TOKEN }}
+          path: structure-repo
           
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -36,27 +36,7 @@ jobs:
       - name: Generate structure
         run: |
           cd main-repo
-          echo "Current directory: $(pwd)"
-          echo "Files before generation:"
-          ls -la ../structure-repo
-          
-          # Run the generator
           node scripts/generate-structure.js ../structure-repo
-          
-          echo "Files after generation:"
-          ls -la ../structure-repo
-          
-          # Show content of structure repo
-          echo "Content of generated files:"
-          ls -la ../structure-repo/
-          
-          # Check if files were actually created
-          if [ -f ../structure-repo/STRUCTURE.json ]; then
-            echo "✅ STRUCTURE.json was created successfully"
-            echo "File size: $(wc -c < ../structure-repo/STRUCTURE.json) bytes"
-          else
-            echo "❌ STRUCTURE.json was NOT created"
-          fi
           
       - name: Copy updated PROJECT_STATUS.md back to main repo
         run: |
@@ -73,27 +53,8 @@ jobs:
       - name: Commit structure repo changes
         run: |
           cd structure-repo
-          
-          # List all files to debug
-          echo "All files in structure repo:"
-          ls -la
-          
-          # Configure git
           git config user.name "Structure Bot"
           git config user.email "bot@cmvault.com"
-          
-          # Add all files
           git add .
-          
-          # Check what will be committed
-          echo "Files to be committed:"
-          git status
-          
-          # Commit if there are changes
-          if ! git diff --staged --quiet; then
-            git commit -m "🤖 Auto-update structure and status"
-            git push
-            echo "✅ Changes pushed successfully"
-          else
-            echo "⚠️ No changes to commit"
-          fi
+          git diff --staged --quiet || git commit -m "🤖 Auto-update structure and status"
+          git push
