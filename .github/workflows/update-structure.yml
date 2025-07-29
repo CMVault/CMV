@@ -1,60 +1,42 @@
-name: Auto-Update Structure
+name: Update Structure Repository
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch:  # Allows manual trigger
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   update-structure:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout main repo
-        uses: actions/checkout@v3
-        with:
-          path: main-repo
-          
-      - name: Checkout structure repo
-        uses: actions/checkout@v3
-        with:
-          repository: CMVault/cmv-structure
-          token: ${{ secrets.CMV_STRUCTURE_TOKEN }}
-          path: structure-repo
-          
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          
-      - name: Copy current PROJECT_STATUS.md to structure repo
-        run: |
-          if [ -f main-repo/PROJECT_STATUS.md ]; then
-            cp main-repo/PROJECT_STATUS.md structure-repo/
-          fi
-          
-      - name: Generate structure
-        run: |
-          cd main-repo
-          node scripts/generate-structure.js ../structure-repo
-          
-      - name: Copy updated PROJECT_STATUS.md back to main repo
-        run: |
-          if [ -f structure-repo/PROJECT_STATUS.md ]; then
-            cp structure-repo/PROJECT_STATUS.md main-repo/
-            cd main-repo
-            git config user.name "Structure Bot"
-            git config user.email "bot@cmvault.com"
-            git add PROJECT_STATUS.md
-            git diff --staged --quiet || git commit -m "🤖 Auto-update PROJECT_STATUS.md"
-            git push
-          fi
-          
-      - name: Commit structure repo changes
-        run: |
-          cd structure-repo
-          git config user.name "Structure Bot"
-          git config user.email "bot@cmvault.com"
-          git add .
-          git diff --staged --quiet || git commit -m "🤖 Auto-update structure and status"
-          git push
+    - name: Checkout main repository
+      uses: actions/checkout@v3
+      with:
+        path: cmv
+        
+    - name: Checkout structure repository
+      uses: actions/checkout@v3
+      with:
+        repository: CMVault/cmv-structure
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: cmv-structure
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Generate structure files
+      run: |
+        cd cmv
+        node scripts/generate-structure.js ../cmv-structure
+        
+    - name: Commit and push structure updates
+      run: |
+        cd cmv-structure
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add .
+        git diff --staged --quiet || git commit -m "Auto-update structure files"
+        git push
