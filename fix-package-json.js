@@ -1,0 +1,32 @@
+const fs = require('fs');
+
+// Correct package.json content
+const correctPackageJson = {
+  "name": "camera-manual-vault",
+  "version": "1.0.0",
+  "description": "Camera Manual Vault - The ultimate camera database",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "sharp": "^0.33.0",
+    "sqlite3": "^5.1.6",
+    "dotenv": "^16.3.1",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.9",
+    "express-ejs-layouts": "^2.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+};
+
+// Write the correct package.json
+fs.writeFileSync('package.json', JSON.stringify(correctPackageJson, null, 2));
+console.log('✅ package.json has been fixed!');
