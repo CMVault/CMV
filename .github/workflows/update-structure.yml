@@ -21,7 +21,6 @@ jobs:
         repository: CMVault/cmv-structure
         token: ${{ secrets.STRUCTURE_PAT }}
         path: cmv-structure
-        persist-credentials: true  # Important!
     
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -35,14 +34,19 @@ jobs:
         node scripts/generate-structure.js ../cmv-structure
     
     - name: Commit and push structure updates
+      env:
+        GITHUB_TOKEN: ${{ secrets.STRUCTURE_PAT }}
       run: |
         cd cmv-structure
         
-        # Configure git to use the token
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        # Configure git with the PAT
+        git config --global user.name "CMVault"
+        git config --global user.email "your-email@example.com"  # Use your GitHub email
         
-        # Check for changes
+        # Set the remote URL with the token
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/CMVault/cmv-structure.git
+        
+        # Add and commit
         git add -A
         
         if git diff --staged --quiet; then
@@ -50,8 +54,7 @@ jobs:
         else
           echo "📝 Committing changes..."
           git commit -m "🤖 Update project structure - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-          
-          # Push using the token that was used for checkout
           git push
           echo "✅ Structure updated successfully!"
         fi
+        
