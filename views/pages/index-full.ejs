@@ -1,0 +1,543 @@
+<%
+// Page configuration
+locals.title = 'The Ultimate Camera Database';
+locals.pageStyles = [];
+locals.pageScripts = [];
+%>
+
+<style>
+    :root {
+        --primary-color: #ff6b6b;
+        --secondary-color: #4ecdc4;
+        --dark-bg: #0a0a0a;
+        --darker-bg: #050505;
+        --card-bg: #1a1a1a;
+        --card-hover: #252525;
+        --text-primary: #ffffff;
+        --text-secondary: #b0b0b0;
+        --text-muted: #666666;
+        --border-color: #333333;
+        --success-color: #4CAF50;
+        --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    body {
+        background-color: var(--dark-bg) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Override default styles */
+    .site-header {
+        background: rgba(10, 10, 10, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 4rem 2rem 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #fff 0%, #ff6b6b 50%, #4ecdc4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero p {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Search Section */
+    .search-section {
+        max-width: 800px;
+        margin: 0 auto 3rem;
+        padding: 0 2rem;
+    }
+
+    .search-container {
+        display: flex;
+        gap: 1rem;
+        background: var(--card-bg);
+        padding: 0.5rem;
+        border-radius: 50px;
+        border: 2px solid var(--border-color);
+    }
+
+    .search-input {
+        flex: 1;
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        padding: 1rem 1.5rem;
+        font-size: 1.1rem;
+        outline: none;
+    }
+
+    .brand-select {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        padding: 0 1rem;
+        font-size: 1rem;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .search-btn {
+        background: var(--gradient-1);
+        border: none;
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    /* Stats Bar */
+    .stats-bar {
+        display: flex;
+        justify-content: center;
+        gap: 4rem;
+        margin: 3rem 0;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--card-bg);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        min-width: 200px;
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: var(--primary-color);
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Quick Links */
+    .quick-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin: 2rem 0 4rem;
+        flex-wrap: wrap;
+    }
+
+    .quick-link {
+        padding: 0.5rem 1.5rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 25px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .quick-link:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Featured Section */
+    .featured-today {
+        max-width: 1200px;
+        margin: 4rem auto;
+        padding: 0 2rem;
+    }
+
+    .featured-today-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .featured-today-title {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .trending-reason {
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+        font-style: italic;
+    }
+
+    .featured-camera-container {
+        background: var(--card-bg);
+        border: 2px solid var(--primary-color);
+        border-radius: 20px;
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 2rem;
+    }
+
+    .featured-camera-image {
+        width: 100%;
+        height: 400px;
+        object-fit: contain;
+        background: var(--darker-bg);
+        border-radius: 15px;
+    }
+
+    .featured-camera-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .featured-camera-model {
+        font-size: 3rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Camera Grid */
+    .cameras-section {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+    }
+
+    .camera-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .camera-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .camera-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Networks Section */
+    .networks-section {
+        background: var(--gradient-2);
+        padding: 4rem 2rem;
+        margin: 4rem 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .networks-content {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .networks-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+
+    .network-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 2rem 1rem;
+        text-decoration: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .network-card:hover {
+        transform: translateY(-5px);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+        background: var(--darker-bg);
+        padding: 2rem;
+        margin-top: 4rem;
+        text-align: center;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .disclaimer-text {
+        max-width: 800px;
+        margin: 0 auto;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+        .featured-camera-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .networks-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero">
+    <h1>Find Specs and Manuals for Every Camera Ever Made</h1>
+    <p>The most complete resource for manuals, comparisons, camera tools, and real-world gear used on real productions.</p>
+</section>
+
+<!-- Search Section -->
+<section class="search-section">
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Search by camera name, model, or production..." id="searchInput">
+        <select class="brand-select" id="brandSelect">
+            <option value="">All Brands</option>
+            <option value="Canon">Canon</option>
+            <option value="Nikon">Nikon</option>
+            <option value="Sony">Sony</option>
+            <option value="Fujifilm">Fujifilm</option>
+            <option value="Panasonic">Panasonic</option>
+        </select>
+        <button class="search-btn" onclick="performSearch()">Search</button>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <span class="stat-number" id="camera-count">0</span>
+        <span class="stat-label">Cameras Documented</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-number" id="manual-count">0</span>
+        <span class="stat-label">Manuals Available</span>
+    </div>
+</div>
+
+<!-- Quick Links -->
+<div class="quick-links">
+    <a href="/cameras?filter=latest" class="quick-link">📷 Latest Cameras</a>
+    <a href="/cameras?filter=trending" class="quick-link">🔥 Trending Cameras</a>
+    <a href="/cameras?filter=awards" class="quick-link">🏆 Award Winners</a>
+</div>
+
+<!-- Featured Camera -->
+<section class="featured-today" id="featured-section">
+    <div class="featured-today-header">
+        <h2 class="featured-today-title">📸 Trending Camera of the Day</h2>
+        <p class="trending-reason" id="trending-reason">Loading trending data...</p>
+    </div>
+    
+    <div class="featured-camera-container" id="featured-camera">
+        <img src="/images/camera-placeholder.jpg" alt="Featured Camera" class="featured-camera-image" id="featured-image">
+        
+        <div class="featured-camera-info">
+            <div class="featured-camera-brand" id="featured-brand">Loading...</div>
+            <div class="featured-camera-model" id="featured-model">Loading...</div>
+            <p class="featured-camera-description" id="featured-description">
+                Loading camera information...
+            </p>
+            
+            <div class="featured-actions" style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <a href="#" id="featured-details-link" class="btn btn-primary">View Full Details</a>
+                <a href="#" id="featured-manual-link" class="btn btn-secondary" style="display: none;">Download Manual</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Camera Database -->
+<section class="cameras-section">
+    <div class="section-header">
+        <h2 class="section-title">Camera Database</h2>
+        <a href="/cameras" class="btn btn-secondary">View All Cameras →</a>
+    </div>
+    
+    <div class="camera-grid" id="camera-grid">
+        <div class="loading">Loading cameras...</div>
+    </div>
+</section>
+
+<!-- Industry Networks -->
+<section class="networks-section">
+    <div class="networks-content">
+        <h2 class="networks-title">Used by Industry Professionals</h2>
+        <p class="networks-subtitle">Explore cameras used in productions from top networks and streamers</p>
+        
+        <div class="networks-grid" id="networks-grid">
+            <div class="network-card">
+                <div class="network-logo" style="font-size: 2rem; margin-bottom: 1rem;">🎬</div>
+                <div class="network-name" style="font-weight: bold;">Netflix</div>
+            </div>
+            <div class="network-card">
+                <div class="network-logo" style="font-size: 2rem; margin-bottom: 1rem;">🎭</div>
+                <div class="network-name" style="font-weight: bold;">HBO</div>
+            </div>
+            <div class="network-card">
+                <div class="network-logo" style="font-size: 2rem; margin-bottom: 1rem;">📺</div>
+                <div class="network-name" style="font-weight: bold;">Disney+</div>
+            </div>
+            <div class="network-card">
+                <div class="network-logo" style="font-size: 2rem; margin-bottom: 1rem;">🎪</div>
+                <div class="network-name" style="font-weight: bold;">Amazon</div>
+            </div>
+            <div class="network-card">
+                <div class="network-logo" style="font-size: 2rem; margin-bottom: 1rem;">🎨</div>
+                <div class="network-name" style="font-weight: bold;">Apple TV+</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer -->
+<div class="disclaimer">
+    <p class="disclaimer-text">
+        <strong>DISCLAIMER:</strong> Camera Manual Vault is an educational resource for preservation of information and learning. 
+        We provide information "as-is" without warranty of any kind. All trademarks and copyrights belong to their respective owners. 
+        Use of equipment and techniques shown are at your own risk.
+    </p>
+</div>
+
+<script>
+// Load homepage data
+async function loadHomepage() {
+    try {
+        // Load stats
+        const statsResponse = await fetch('/api/stats');
+        const stats = await statsResponse.json();
+        
+        document.getElementById('camera-count').textContent = stats.totalCameras || 6;
+        document.getElementById('manual-count').textContent = stats.totalManuals || 4;
+        
+        // Load cameras
+        const camerasResponse = await fetch('/api/cameras?limit=6');
+        const camerasData = await camerasResponse.json();
+        
+        // Display featured camera (first one)
+        if (camerasData.cameras && camerasData.cameras.length > 0) {
+            displayFeaturedCamera(camerasData.cameras[0]);
+            displayCameraGrid(camerasData.cameras);
+        }
+        
+    } catch (error) {
+        console.error('Error loading homepage:', error);
+    }
+}
+
+function displayFeaturedCamera(camera) {
+    document.getElementById('trending-reason').textContent = 'Popular choice for content creators';
+    document.getElementById('featured-brand').textContent = camera.brand;
+    document.getElementById('featured-model').textContent = camera.model;
+    document.getElementById('featured-description').textContent = 
+        `${camera.category === 'cinema' ? 'Professional cinema camera' : 'Professional camera'} 
+        featuring ${camera.specs?.megapixels || '45MP'} ${camera.specs?.sensor || 'sensor'}, 
+        ${camera.specs?.video || '8K video'} recording, and 
+        ${camera.features?.includes('Weather Sealed') ? 'weather sealing' : 'professional features'}.`;
+    
+    document.getElementById('featured-image').src = camera.proxiedImageUrl || '/images/camera-placeholder.jpg';
+    document.getElementById('featured-details-link').href = `/camera/${camera.id}`;
+    
+    if (camera.manualUrl) {
+        const manualLink = document.getElementById('featured-manual-link');
+        manualLink.style.display = 'inline-block';
+        manualLink.href = camera.manualUrl;
+    }
+}
+
+function displayCameraGrid(cameras) {
+    const grid = document.getElementById('camera-grid');
+    grid.innerHTML = cameras.map(camera => `
+        <div class="camera-card" onclick="window.location.href='/camera/${camera.id}'">
+            <div class="camera-image-container" style="height: 200px; background: var(--darker-bg); display: flex; align-items: center; justify-content: center;">
+                <img src="${camera.proxiedImageUrl || '/images/camera-placeholder.jpg'}" 
+                     alt="${camera.fullName}"
+                     style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="camera-info" style="padding: 1.5rem;">
+                <div class="camera-brand" style="color: var(--primary-color); font-size: 0.9rem; text-transform: uppercase; margin-bottom: 0.5rem;">
+                    ${camera.brand}
+                </div>
+                <div class="camera-model" style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">
+                    ${camera.model}
+                </div>
+                <div class="camera-specs" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <span class="spec-badge" style="background: var(--darker-bg); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.85rem;">
+                        ${camera.specs?.megapixels || '45MP'}
+                    </span>
+                    <span class="spec-badge" style="background: var(--darker-bg); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.85rem;">
+                        ${camera.specs?.video || '8K'}
+                    </span>
+                    <span class="spec-badge" style="background: var(--darker-bg); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.85rem;">
+                        ${camera.specs?.sensor || 'Full Frame'}
+                    </span>
+                </div>
+                <div class="camera-meta" style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <span class="release-year" style="color: var(--text-muted);">${camera.releaseYear || 2020}</span>
+                    ${camera.manualUrl ? 
+                        '<a href="#" onclick="event.stopPropagation(); window.open(\'' + camera.manualUrl + '\')">Manual →</a>' : 
+                        '<span style="color: var(--text-muted);">No manual</span>'
+                    }
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function performSearch() {
+    const query = document.getElementById('searchInput').value;
+    const brand = document.getElementById('brandSelect').value;
+    
+    const params = new URLSearchParams();
+    if (query) params.append('q', query);
+    if (brand) params.append('brand', brand);
+    
+    window.location.href = '/search?' + params.toString();
+}
+
+// Initialize
+loadHomepage();
+
+// Enter key search
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') performSearch();
+});
+</script>
