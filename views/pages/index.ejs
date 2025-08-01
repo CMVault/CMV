@@ -1,0 +1,53 @@
+<%
+// Page configuration
+locals.title = 'Home';
+locals.pageStyles = [];
+locals.pageScripts = [];
+%>
+
+<div class="page-content">
+    <div class="container">
+        <div class="text-center">
+            <h1>Welcome to Camera Manual Vault</h1>
+            <p class="text-large">The ultimate resource for camera manuals and specifications</p>
+            
+            <div class="mt-4">
+                <a href="/cameras" class="btn btn-primary">Browse Cameras</a>
+                <a href="/camera-finder" class="btn btn-secondary">Find Your Camera</a>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="grid grid-3 mt-5">
+            <div class="card text-center">
+                <h2 id="cameraCount">0</h2>
+                <p>Cameras Documented</p>
+            </div>
+            <div class="card text-center">
+                <h2 id="manualCount">0</h2>
+                <p>Manuals Available</p>
+            </div>
+            <div class="card text-center">
+                <h2>24/7</h2>
+                <p>Always Available</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load stats
+async function loadStats() {
+    try {
+        const response = await fetch('/api/stats');
+        const data = await response.json();
+        
+        document.getElementById('cameraCount').textContent = data.totalCameras || 0;
+        document.getElementById('manualCount').textContent = data.totalManuals || 0;
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadStats);
+</script>
