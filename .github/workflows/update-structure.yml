@@ -1,8 +1,8 @@
-name: Update Structure Repository
+name: Update Project Structure
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
@@ -10,33 +10,48 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout main repository
-      uses: actions/checkout@v3
+    - name: Checkout CMV repo
+      uses: actions/checkout@v4
       with:
         path: cmv
-        
-    - name: Checkout structure repository
-      uses: actions/checkout@v3
+    
+    - name: Checkout structure repo
+      uses: actions/checkout@v4
       with:
         repository: CMVault/cmv-structure
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.STRUCTURE_PAT }}
         path: cmv-structure
-        
+        persist-credentials: true  # Important!
+    
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18'
-        
+    
     - name: Generate structure files
       run: |
         cd cmv
+        echo "📁 Running structure generation..."
         node scripts/generate-structure.js ../cmv-structure
-        
+    
     - name: Commit and push structure updates
       run: |
         cd cmv-structure
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
-        git add .
-        git diff --staged --quiet || git commit -m "Auto-update structure files"
-        git push
+        
+        # Configure git to use the token
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+        # Check for changes
+        git add -A
+        
+        if git diff --staged --quiet; then
+          echo "✅ No changes to commit"
+        else
+          echo "📝 Committing changes..."
+          git commit -m "🤖 Update project structure - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          
+          # Push using the token that was used for checkout
+          git push
+          echo "✅ Structure updated successfully!"
+        fi
