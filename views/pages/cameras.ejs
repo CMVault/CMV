@@ -1,0 +1,58 @@
+<%
+// Page configuration
+locals.title = 'Camera Database';
+locals.pageStyles = [];
+locals.pageScripts = [];
+%>
+
+<div class="page-content">
+    <div class="container">
+        <h1>Camera Database</h1>
+        <p>Browse our comprehensive collection of camera specifications and manuals</p>
+        
+        <!-- Camera list will be loaded here by JavaScript -->
+        <div id="cameraList" class="camera-list">
+            <div class="loading">Loading cameras...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Load cameras when page loads
+async function loadCameras() {
+    try {
+        const response = await fetch('/api/cameras');
+        const data = await response.json();
+        
+        const cameraList = document.getElementById('cameraList');
+        
+        if (data.cameras && data.cameras.length > 0) {
+            cameraList.innerHTML = `
+                <div class="grid grid-3">
+                    ${data.cameras.map(camera => `
+                        <div class="card" onclick="window.location.href='/camera/${camera.id}'">
+                            <img src="${camera.proxiedImageUrl || '/images/camera-placeholder.jpg'}" 
+                                 alt="${camera.fullName}"
+                                 class="card-image"
+                                 onerror="this.src='/images/camera-placeholder.jpg'">
+                            <h3 class="card-title">${camera.fullName}</h3>
+                            <div class="card-meta">
+                                ${camera.category || 'Camera'} • ${camera.releaseYear || 'N/A'}
+                                ${camera.price ? ` • $${camera.price}` : ''}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        } else {
+            cameraList.innerHTML = '<p class="text-center">No cameras found. Add some cameras to the database!</p>';
+        }
+    } catch (error) {
+        console.error('Error loading cameras:', error);
+        document.getElementById('cameraList').innerHTML = '<p class="error">Error loading cameras. Please try again.</p>';
+    }
+}
+
+// Load on page ready
+document.addEventListener('DOMContentLoaded', loadCameras);
+</script>
