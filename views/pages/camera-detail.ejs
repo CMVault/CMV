@@ -1,0 +1,51 @@
+<%
+locals.title = 'Camera Details';
+locals.pageStyles = [];
+locals.pageScripts = [];
+%>
+
+<div class="page-content">
+    <div class="container">
+        <div id="cameraDetails">
+            <div class="loading">Loading camera details...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Get camera ID from URL
+const pathParts = window.location.pathname.split('/');
+const cameraId = pathParts[pathParts.length - 1];
+
+async function loadCameraDetails() {
+    try {
+        const response = await fetch(`/api/camera/${cameraId}`);
+        if (!response.ok) throw new Error('Camera not found');
+        
+        const camera = await response.json();
+        
+        document.getElementById('cameraDetails').innerHTML = `
+            <h1>${camera.fullName}</h1>
+            <div class="grid grid-2">
+                <div>
+                    <img src="${camera.proxiedImageUrl || '/images/camera-placeholder.jpg'}" 
+                         alt="${camera.fullName}"
+                         style="width: 100%; border-radius: 8px;">
+                </div>
+                <div>
+                    <p><strong>Brand:</strong> ${camera.brand}</p>
+                    <p><strong>Model:</strong> ${camera.model}</p>
+                    <p><strong>Category:</strong> ${camera.category || 'N/A'}</p>
+                    <p><strong>Year:</strong> ${camera.releaseYear || 'N/A'}</p>
+                    <p><strong>Price:</strong> ${camera.price ? '$' + camera.price : 'N/A'}</p>
+                    ${camera.manualUrl ? `<a href="${camera.manualUrl}" class="btn btn-primary" target="_blank">Download Manual</a>` : ''}
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        document.getElementById('cameraDetails').innerHTML = '<p class="error">Camera not found</p>';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadCameraDetails);
+</script>
