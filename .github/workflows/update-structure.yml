@@ -32,10 +32,13 @@ jobs:
         cd cmv
         echo "Running structure generation..."
         node scripts/generate-structure.js ../cmv-structure
+        echo "Structure generation complete"
+        
+        # Debug: Show what files were created
+        echo "Files in structure directory:"
+        ls -la ../cmv-structure/
     
     - name: Commit and push structure updates
-      env:
-        GITHUB_TOKEN: ${{ secrets.STRUCTURE_PAT }}
       run: |
         cd cmv-structure
         
@@ -43,8 +46,15 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
+        # Debug: Show git status
+        echo "Git status before add:"
+        git status
+        
         # Add and commit
         git add -A
+        
+        echo "Git status after add:"
+        git status
         
         if git diff --staged --quiet; then
           echo "No changes to commit"
@@ -52,7 +62,8 @@ jobs:
           echo "Committing changes..."
           git commit -m "🤖 Update project structure - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
           
+          echo "Pushing to repository..."
           # Push with the token
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/CMVault/cmv-structure.git HEAD:main
-          echo "Structure updated successfully!"
+          git push https://x-access-token:${{ secrets.STRUCTURE_PAT }}@github.com/CMVault/cmv-structure.git HEAD:main
+          echo "Push complete!"
         fi
