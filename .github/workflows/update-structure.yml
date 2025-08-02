@@ -30,7 +30,7 @@ jobs:
     - name: Generate structure files
       run: |
         cd cmv
-        echo "📁 Running structure generation..."
+        echo "Running structure generation..."
         node scripts/generate-structure.js ../cmv-structure
     
     - name: Commit and push structure updates
@@ -47,7 +47,12 @@ jobs:
         git add -A
         
         if git diff --staged --quiet; then
-          echo "✅ No changes to commit"
+          echo "No changes to commit"
         else
-          echo "📝 Committing changes..."
-          git commit -m "�
+          echo "Committing changes..."
+          git commit -m "🤖 Update project structure - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          
+          # Push with the token
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/CMVault/cmv-structure.git HEAD:main
+          echo "Structure updated successfully!"
+        fi
