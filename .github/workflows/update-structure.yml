@@ -39,12 +39,9 @@ jobs:
       run: |
         cd cmv-structure
         
-        # Configure git with the PAT
-        git config --global user.name "CMVault"
-        git config --global user.email "your-email@example.com"  # Use your GitHub email
-        
-        # Set the remote URL with the token
-        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/CMVault/cmv-structure.git
+        # Configure git
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
         
         # Add and commit
         git add -A
@@ -53,8 +50,4 @@ jobs:
           echo "✅ No changes to commit"
         else
           echo "📝 Committing changes..."
-          git commit -m "🤖 Update project structure - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
-          git push
-          echo "✅ Structure updated successfully!"
-        fi
-        
+          git commit -m "�
