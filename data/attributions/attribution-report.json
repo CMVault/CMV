@@ -1,0 +1,28 @@
+{
+  "generated": "2025-08-03T21:53:24.298Z",
+  "totalImages": 2,
+  "attributions": [
+    {
+      "id": 1,
+      "cameraId": "canon-eos-r5",
+      "imageUrl": "https://i.imgur.com/WJyaLG0.jpg",
+      "localPath": "/images/cameras/canon-eos-r5.jpg",
+      "source": "Product Image",
+      "author": "Canon Inc.",
+      "license": "Fair Use",
+      "attributionText": "Product image for educational purposes",
+      "createdAt": "2025-08-03 21:53:20"
+    },
+    {
+      "id": 2,
+      "cameraId": "sony-a7r-v",
+      "imageUrl": "https://i.imgur.com/qN8K9Lp.jpg",
+      "localPath": "/images/cameras/sony-a7r-v.jpg",
+      "source": "Product Image",
+      "author": "Sony Corporation",
+      "license": "Fair Use",
+      "attributionText": "Product image for educational purposes",
+      "createdAt": "2025-08-03 21:53:22"
+    }
+  ]
+}
