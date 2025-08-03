@@ -1,8 +1,11 @@
+// Load environment variables
 require('dotenv').config();
+
 const express = require('express');
 const axios = require('axios');
 const sharp = require('sharp');
 const fs = require('fs').promises;
+const fsSync = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const sqlite3 = require('sqlite3').verbose();
@@ -10,393 +13,498 @@ const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
 
-class CameraVaultServer {
-  constructor() {
-    this.app = express();
-    this.port = process.env.PORT || 3000;
-    this.setupMiddleware();
-    this.setupDatabase();
-    this.setupRoutes();
-    this.setupImageCache();
-    this.setupAttributionSystem();
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  setupMiddleware() {
-    this.app.use(helmet({
-      contentSecurityPolicy: {
+// Database path
+const dbPath = path.join(__dirname, 'data', 'camera-vault.db');
+
+// Create database connection
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
+        console.log('Connected to SQLite database');
+    }
+});
+
+// Middleware
+app.use(helmet({
+    contentSecurityPolicy: {
         directives: {
-          defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "https:", "blob:"],
-          connectSrc: ["'self'", "https:"]
-        }
-      }
-    }));
-    this.app.use(compression());
-    this.app.use(cors());
-    this.app.use(express.json());
-    this.app.use(express.static('public'));
-  }
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:", "http:"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'", "data:"],
+        },
+    },
+}));
+app.use(compression());
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-  async setupDatabase() {
-    const dbPath = path.join(__dirname, 'data', 'camera-vault.db');
-    await fs.mkdir(path.dirname(dbPath), { recursive: true });
-    this.db = new sqlite3.Database(dbPath);
-    
-    this.db.serialize(() => {
-      this.db.run(`
-        CREATE TABLE IF NOT EXISTS cameras (
-          id TEXT PRIMARY KEY,
-          brand TEXT NOT NULL,
-          model TEXT NOT NULL,
-          fullName TEXT,
-          category TEXT,
-          releaseYear INTEGER,
-          price REAL,
-          imageUrl TEXT,
-          localImagePath TEXT,
-          imageVerified BOOLEAN DEFAULT 0,
-          imageLastChecked DATETIME,
-          manualUrl TEXT,
-          specs TEXT,
-          features TEXT,
-          lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
+// Static files
+app.use(express.static('public'));
+app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
-      this.db.run(`
-        CREATE TABLE IF NOT EXISTS image_cache (
-          url TEXT PRIMARY KEY,
-          localPath TEXT,
-          contentType TEXT,
-          size INTEGER,
-          cachedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-          lastAccessed DATETIME DEFAULT CURRENT_TIMESTAMP
-        )`);
+// View engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views', 'pages'));
 
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_cameras_brand ON cameras(brand)');
-      this.db.run('CREATE INDEX IF NOT EXISTS idx_cameras_category ON cameras(category)');
+// Helper function to run database queries
+function dbAll(query, params = []) {
+    return new Promise((resolve, reject) => {
+        db.all(query, params, (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
     });
-    this.initializeSampleData();
-  }
-
-  async setupImageCache() {
-    this.cacheDir = path.join(__dirname, 'cache', 'images');
-    this.publicImagesDir = path.join(__dirname, 'public', 'images', 'cameras');
-    await fs.mkdir(this.cacheDir, { recursive: true });
-    await fs.mkdir(this.publicImagesDir, { recursive: true });
-  }
-
-  async setupAttributionSystem() {
-    this.attributionDir = path.join(__dirname, 'cache', 'attribution');
-    await fs.mkdir(this.attributionDir, { recursive: true });
-  }
-
-  setupRoutes() {
-    this.app.get('/api/cameras', this.getCameras.bind(this));
-    this.app.get('/api/camera/:id', this.getCamera.bind(this));
-    this.app.get('/api/search', this.searchCameras.bind(this));
-    this.app.get('/api/stats', this.getStats.bind(this));
-    this.app.get('/api/image-proxy', this.imageProxy.bind(this));
-    this.app.get('/images/cameras/:filename', this.serveCachedImage.bind(this));
-    this.app.post('/api/camera-finder', this.cameraFinder.bind(this));
-    this.app.get('/camera/:id', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'camera-detail.html')); });
-    // Camera Blog route
-    this.app.get('/camera-blog', (req, res) => {
-      res.sendFile(path.join(__dirname, 'public', 'camera-blog.html'));
-    });
-
-    // Legal pages routes
-    this.app.get('/privacy', (req, res) => res.sendFile(path.join(__dirname, 'public', 'privacy.html')));
-    this.app.get('/terms', (req, res) => res.sendFile(path.join(__dirname, 'public', 'terms.html')));
-    this.app.get('/dmca', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dmca.html')));
-    this.app.get('/attribution', (req, res) => res.sendFile(path.join(__dirname, 'public', 'attribution.html')));
-    this.app.get('/legal', (req, res) => res.sendFile(path.join(__dirname, 'public', 'legal.html')));
-  }
-
-  async imageProxy(req, res) {
-    const imageUrl = req.query.url;
-    const source = req.query.source || 'Unknown';
-    
-    if (!imageUrl) return res.status(400).json({ error: 'No URL provided' });
-
-    try {
-      // Check cache first
-      const cachedImage = await this.getCachedImage(imageUrl);
-      if (cachedImage) {
-        // Add attribution headers
-        try {
-          const urlHash = crypto.createHash('md5').update(imageUrl).digest('hex');
-          const attributionFile = path.join(this.attributionDir, `${urlHash}.json`);
-          const attribution = JSON.parse(await fs.readFile(attributionFile, 'utf8'));
-          res.set('X-Image-Source', attribution.source);
-          res.set('X-Original-URL', attribution.originalUrl);
-        } catch (e) {
-          // Attribution file might not exist for old cached images
-        }
-        res.set('Content-Type', cachedImage.contentType);
-        res.set('Cache-Control', 'public, max-age=86400');
-        return res.sendFile(cachedImage.localPath);
-      }
-
-      // Download image
-      const response = await axios.get(imageUrl, {
-        responseType: 'arraybuffer',
-        timeout: 10000,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Camera Manual Vault - Educational/Non-commercial Use)',
-          'Accept': 'image/webp,image/apng,image/*,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Referer': new URL(imageUrl).origin
-        }
-      });
-
-      const buffer = Buffer.from(response.data);
-      const contentType = response.headers['content-type'] || 'image/jpeg';
-      const hash = crypto.createHash('md5').update(imageUrl).digest('hex');
-      const ext = contentType.split('/')[1] || 'jpg';
-      const filename = `${hash}.${ext}`;
-      const cachePath = path.join(this.cacheDir, filename);
-      const publicPath = path.join(this.publicImagesDir, filename);
-
-      // Save original to cache
-      await fs.writeFile(cachePath, buffer);
-
-      // Process and optimize image
-      await sharp(buffer)
-        .resize(800, 600, { fit: 'inside', withoutEnlargement: true })
-        .jpeg({ quality: 85, progressive: true })
-        .toFile(publicPath);
-
-      // Save attribution data
-      const attributionFile = path.join(this.attributionDir, `${hash}.json`);
-      const attributionData = {
-        originalUrl: imageUrl,
-        source: source,
-        downloadedAt: new Date().toISOString(),
-        domain: new URL(imageUrl).hostname
-      };
-      await fs.writeFile(attributionFile, JSON.stringify(attributionData, null, 2));
-
-      // Save to database
-      this.db.run(
-        'INSERT OR REPLACE INTO image_cache (url, localPath, contentType, size) VALUES (?, ?, ?, ?)',
-        [imageUrl, publicPath, contentType, buffer.length]
-      );
-
-      // Send with attribution headers
-      res.set('Content-Type', 'image/jpeg');
-      res.set('Cache-Control', 'public, max-age=86400');
-      res.set('X-Image-Source', source);
-      res.set('X-Original-URL', imageUrl);
-      res.sendFile(publicPath);
-
-    } catch (error) {
-      console.error('Image proxy error:', error.message);
-      const placeholderPath = path.join(__dirname, 'public', 'images', 'placeholder.jpg');
-      res.set('Content-Type', 'image/jpeg');
-      res.sendFile(placeholderPath);
-    }
-  }
-
-  async getCachedImage(url) {
-    return new Promise((resolve) => {
-      this.db.get('SELECT * FROM image_cache WHERE url = ?', [url], async (err, row) => {
-        if (err || !row) {
-          resolve(null);
-          return;
-        }
-        this.db.run('UPDATE image_cache SET lastAccessed = CURRENT_TIMESTAMP WHERE url = ?', [url]);
-        try {
-          await fs.access(row.localPath);
-          resolve(row);
-        } catch {
-          this.db.run('DELETE FROM image_cache WHERE url = ?', [url]);
-          resolve(null);
-        }
-      });
-    });
-  }
-
-  async serveCachedImage(req, res) {
-    const filename = req.params.filename;
-    const imagePath = path.join(this.publicImagesDir, filename);
-    try {
-      await fs.access(imagePath);
-      res.set('Cache-Control', 'public, max-age=86400');
-      res.sendFile(imagePath);
-    } catch {
-      res.status(404).sendFile(path.join(__dirname, 'public', 'images', 'placeholder.jpg'));
-    }
-  }
-
-  async getCameras(req, res) {
-    const { page = 1, limit = 20, category, brand } = req.query;
-    const offset = (page - 1) * limit;
-    let query = 'SELECT * FROM cameras WHERE 1=1';
-    const params = [];
-    
-    if (category) {
-      query += ' AND category = ?';
-      params.push(category);
-    }
-    if (brand) {
-      query += ' AND brand = ?';
-      params.push(brand);
-    }
-    
-    query += ' ORDER BY lastUpdated DESC LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), offset);
-    
-    this.db.all(query, params, (err, cameras) => {
-      if (err) return res.status(500).json({ error: 'Database error' });
-      
-      const processedCameras = cameras.map(camera => ({
-        ...camera,
-        specs: JSON.parse(camera.specs || '{}'),
-        features: JSON.parse(camera.features || '[]'),
-        proxiedImageUrl: camera.imageUrl ? 
-          `/api/image-proxy?url=${encodeURIComponent(camera.imageUrl)}` : 
-          '/images/placeholder.jpg'
-      }));
-      
-      res.json({
-        cameras: processedCameras,
-        page: parseInt(page),
-        limit: parseInt(limit)
-      });
-    });
-  }
-
-  async getCamera(req, res) {
-    const { id } = req.params;
-    this.db.get('SELECT * FROM cameras WHERE id = ?', [id], (err, camera) => {
-      if (err) return res.status(500).json({ error: 'Database error' });
-      if (!camera) return res.status(404).json({ error: 'Camera not found' });
-      
-      camera.specs = JSON.parse(camera.specs || '{}');
-      camera.features = JSON.parse(camera.features || '[]');
-      camera.proxiedImageUrl = camera.imageUrl ? 
-        `/api/image-proxy?url=${encodeURIComponent(camera.imageUrl)}` : 
-        '/images/placeholder.jpg';
-      
-      res.json(camera);
-    });
-  }
-
-  async searchCameras(req, res) {
-    const { q } = req.query;
-    if (!q) return res.json({ results: [] });
-    
-    const query = 'SELECT * FROM cameras WHERE fullName LIKE ? OR brand LIKE ? OR model LIKE ? ORDER BY fullName LIMIT 20';
-    const searchTerm = `%${q}%`;
-    
-    this.db.all(query, [searchTerm, searchTerm, searchTerm], (err, results) => {
-      if (err) return res.status(500).json({ error: 'Search error' });
-      
-      const processedResults = results.map(camera => ({
-        ...camera,
-        specs: JSON.parse(camera.specs || '{}'),
-        features: JSON.parse(camera.features || '[]'),
-        proxiedImageUrl: camera.imageUrl ? 
-          `/api/image-proxy?url=${encodeURIComponent(camera.imageUrl)}` : 
-          '/images/placeholder.jpg'
-      }));
-      
-      res.json({ results: processedResults });
-    });
-  }
-
-  async getStats(req, res) {
-    this.db.get('SELECT COUNT(*) as totalCameras FROM cameras', (err, result) => {
-      if (err) return res.status(500).json({ error: 'Stats error' });
-      res.json({
-        totalCameras: result.totalCameras,
-        totalManuals: Math.floor(result.totalCameras * 0.7),
-        lastUpdated: new Date().toISOString()
-      });
-    });
-  }
-
-  async cameraFinder(req, res) {
-    const { useCase, experience, budget, features, cameraType } = req.body;
-    
-    let query = 'SELECT * FROM cameras WHERE 1=1';
-    const params = [];
-    
-    if (budget) {
-      query += ' AND price <= ?';
-      params.push(budget);
-    }
-    
-    if (cameraType && cameraType !== 'any') {
-      query += ' AND category = ?';
-      params.push(cameraType);
-    }
-    
-    query += ' ORDER BY price DESC LIMIT 3';
-    
-    this.db.all(query, params, (err, cameras) => {
-      if (err) return res.status(500).json({ error: 'Finder error' });
-      
-      const recommendations = cameras.map((camera, index) => ({
-        ...camera,
-        specs: JSON.parse(camera.specs || '{}'),
-        features: JSON.parse(camera.features || '[]'),
-        proxiedImageUrl: camera.imageUrl ? 
-          `/api/image-proxy?url=${encodeURIComponent(camera.imageUrl)}` : 
-          '/images/placeholder.jpg',
-        matchScore: 90 - (index * 10),
-        reasons: [
-          'Within your budget',
-          'Matches your experience level',
-          'Great for ' + useCase
-        ]
-      }));
-      
-      res.json({ recommendations });
-    });
-  }
-
-  async initializeSampleData() {
-    this.db.get('SELECT COUNT(*) as count FROM cameras', async (err, result) => {
-      if (err || result.count > 0) return;
-      
-      const sampleCameras = [
-        {
-          id: 'canon-r5',
-          brand: 'Canon',
-          model: 'EOS R5',
-          fullName: 'Canon EOS R5',
-          category: 'mirrorless',
-          releaseYear: 2020,
-          price: 3899,
-          imageUrl: 'https://www.usa.canon.com/inetretail/products/images/products/Cameras/EOS-R5_Default_tcm82-2408659.png',
-          manualUrl: 'https://www.usa.canon.com/support/p/eos-r5',
-          specs: { sensor: 'Full Frame CMOS', megapixels: '45MP', video: '8K 30fps' },
-          features: ['Dual Card Slots', 'Weather Sealed', 'WiFi & Bluetooth', '8K Video']
-        }
-      ];
-      
-      const stmt = this.db.prepare(
-        'INSERT OR IGNORE INTO cameras (id, brand, model, fullName, category, releaseYear, price, imageUrl, manualUrl, specs, features) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
-      );
-      
-      sampleCameras.forEach(camera => {
-        stmt.run(camera.id, camera.brand, camera.model, camera.fullName, camera.category, camera.releaseYear, camera.price, camera.imageUrl, camera.manualUrl, JSON.stringify(camera.specs), JSON.stringify(camera.features));
-      });
-      
-      stmt.finalize();
-    });
-  }
-
-  start() {
-    this.app.listen(this.port, () => {
-      console.log(`Camera Vault Server running on port ${this.port}`);
-    });
-  }
 }
 
-const server = new CameraVaultServer();
-server.start();
+function dbGet(query, params = []) {
+    return new Promise((resolve, reject) => {
+        db.get(query, params, (err, row) => {
+            if (err) reject(err);
+            else resolve(row);
+        });
+    });
+}
+
+function dbRun(query, params = []) {
+    return new Promise((resolve, reject) => {
+        db.run(query, params, function(err) {
+            if (err) reject(err);
+            else resolve({ lastID: this.lastID, changes: this.changes });
+        });
+    });
+}
+
+// API Routes
+
+// Get all cameras
+app.get('/api/cameras', async (req, res) => {
+    try {
+        const { brand, category, sort, limit = 50, offset = 0 } = req.query;
+        
+        let query = 'SELECT * FROM cameras WHERE 1=1';
+        const params = [];
+        
+        if (brand) {
+            query += ' AND brand = ?';
+            params.push(brand);
+        }
+        
+        if (category) {
+            query += ' AND category = ?';
+            params.push(category);
+        }
+        
+        // Sorting
+        switch (sort) {
+            case 'newest':
+                query += ' ORDER BY releaseYear DESC';
+                break;
+            case 'oldest':
+                query += ' ORDER BY releaseYear ASC';
+                break;
+            case 'name':
+                query += ' ORDER BY fullName ASC';
+                break;
+            case 'price-high':
+                query += ' ORDER BY price DESC';
+                break;
+            case 'price-low':
+                query += ' ORDER BY price ASC';
+                break;
+            default:
+                query += ' ORDER BY lastUpdated DESC';
+        }
+        
+        query += ' LIMIT ? OFFSET ?';
+        params.push(parseInt(limit), parseInt(offset));
+        
+        const cameras = await dbAll(query, params);
+        
+        // Parse JSON fields
+        cameras.forEach(camera => {
+            if (camera.specs) camera.specs = JSON.parse(camera.specs);
+            if (camera.features) camera.features = JSON.parse(camera.features);
+        });
+        
+        res.json(cameras);
+    } catch (error) {
+        console.error('Error fetching cameras:', error);
+        res.status(500).json({ error: 'Failed to fetch cameras' });
+    }
+});
+
+// Get single camera by ID
+app.get('/api/camera/:id', async (req, res) => {
+    try {
+        const camera = await dbGet('SELECT * FROM cameras WHERE id = ?', [req.params.id]);
+        
+        if (!camera) {
+            return res.status(404).json({ error: 'Camera not found' });
+        }
+        
+        // Parse JSON fields
+        if (camera.specs) camera.specs = JSON.parse(camera.specs);
+        if (camera.features) camera.features = JSON.parse(camera.features);
+        
+        res.json(camera);
+    } catch (error) {
+        console.error('Error fetching camera:', error);
+        res.status(500).json({ error: 'Failed to fetch camera' });
+    }
+});
+
+// Search cameras
+app.get('/api/search', async (req, res) => {
+    try {
+        const { q } = req.query;
+        if (!q) {
+            return res.json([]);
+        }
+        
+        const query = `
+            SELECT * FROM cameras 
+            WHERE fullName LIKE ? OR brand LIKE ? OR model LIKE ?
+            ORDER BY fullName ASC
+            LIMIT 20
+        `;
+        
+        const searchTerm = `%${q}%`;
+        const cameras = await dbAll(query, [searchTerm, searchTerm, searchTerm]);
+        
+        // Parse JSON fields
+        cameras.forEach(camera => {
+            if (camera.specs) camera.specs = JSON.parse(camera.specs);
+            if (camera.features) camera.features = JSON.parse(camera.features);
+        });
+        
+        res.json(cameras);
+    } catch (error) {
+        console.error('Error searching cameras:', error);
+        res.status(500).json({ error: 'Search failed' });
+    }
+});
+
+// Get stats
+app.get('/api/stats', async (req, res) => {
+    try {
+        const cameraCount = await dbGet('SELECT COUNT(*) as count FROM cameras');
+        const manualCount = await dbGet('SELECT COUNT(*) as count FROM cameras WHERE manualUrl IS NOT NULL');
+        const brandCount = await dbGet('SELECT COUNT(DISTINCT brand) as count FROM cameras');
+        
+        res.json({
+            cameraCount: cameraCount.count,
+            manualCount: manualCount.count,
+            brandCount: brandCount.count
+        });
+    } catch (error) {
+        console.error('Error fetching stats:', error);
+        res.status(500).json({ error: 'Failed to fetch stats' });
+    }
+});
+
+// Get homepage data
+app.get('/api/homepage', async (req, res) => {
+    try {
+        // Get stats
+        const stats = await dbGet(`
+            SELECT 
+                COUNT(*) as cameraCount,
+                COUNT(CASE WHEN manualUrl IS NOT NULL THEN 1 END) as manualCount
+            FROM cameras
+        `);
+        
+        // Get recent cameras
+        const recentCameras = await dbAll(`
+            SELECT * FROM cameras 
+            ORDER BY lastUpdated DESC 
+            LIMIT 12
+        `);
+        
+        // Parse JSON fields for recent cameras
+        recentCameras.forEach(camera => {
+            if (camera.specs) camera.specs = JSON.parse(camera.specs);
+            if (camera.features) camera.features = JSON.parse(camera.features);
+            
+            // Build proper image object
+            camera.image = {
+                url: camera.localImagePath || camera.imageUrl || '/images/camera-placeholder.jpg'
+            };
+        });
+        
+        // Get featured camera (random selection from cameras with images)
+        const featuredCamera = await dbGet(`
+            SELECT * FROM cameras 
+            WHERE localImagePath IS NOT NULL 
+            ORDER BY RANDOM() 
+            LIMIT 1
+        `);
+        
+        let featured = null;
+        if (featuredCamera) {
+            // Parse JSON fields
+            if (featuredCamera.specs) featuredCamera.specs = JSON.parse(featuredCamera.specs);
+            if (featuredCamera.features) featuredCamera.features = JSON.parse(featuredCamera.features);
+            
+            // Build proper image object
+            featuredCamera.image = {
+                url: featuredCamera.localImagePath || featuredCamera.imageUrl || '/images/camera-placeholder.jpg'
+            };
+            
+            // Create featured object with proper structure
+            featured = {
+                camera: {
+                    ...featuredCamera,
+                    sensor: featuredCamera.specs?.sensor || { size: 'Full Frame', megapixels: 45 },
+                    video: featuredCamera.specs?.video || { maxResolution: '8K' }
+                },
+                reason: `Trending today: ${featuredCamera.fullName} - A ${featuredCamera.category || 'professional'} camera with exceptional features`,
+                production: null // Could be linked to productions table in future
+            };
+        }
+        
+        res.json({
+            stats,
+            recentCameras,
+            featuredCamera: featured
+        });
+    } catch (error) {
+        console.error('Error fetching homepage data:', error);
+        res.status(500).json({ error: 'Failed to fetch homepage data' });
+    }
+});
+
+// Get brands list
+app.get('/api/brands', async (req, res) => {
+    try {
+        const brands = await dbAll(`
+            SELECT DISTINCT brand, COUNT(*) as count 
+            FROM cameras 
+            GROUP BY brand 
+            ORDER BY brand ASC
+        `);
+        
+        res.json(brands);
+    } catch (error) {
+        console.error('Error fetching brands:', error);
+        res.status(500).json({ error: 'Failed to fetch brands' });
+    }
+});
+
+// Camera finder endpoint
+app.post('/api/camera-finder', async (req, res) => {
+    try {
+        const { budget, primaryUse, experience } = req.body;
+        
+        let query = 'SELECT * FROM cameras WHERE 1=1';
+        const params = [];
+        
+        // Filter by budget
+        if (budget && budget !== 'any') {
+            const budgetRanges = {
+                'under-500': [0, 500],
+                '500-1000': [500, 1000],
+                '1000-2000': [1000, 2000],
+                '2000-5000': [2000, 5000],
+                'over-5000': [5000, 999999]
+            };
+            
+            if (budgetRanges[budget]) {
+                query += ' AND price >= ? AND price <= ?';
+                params.push(budgetRanges[budget][0], budgetRanges[budget][1]);
+            }
+        }
+        
+        // Filter by use case
+        if (primaryUse && primaryUse !== 'general') {
+            // This is simplified - in real app would have more sophisticated matching
+            if (primaryUse === 'video') {
+                query += ' AND category = ?';
+                params.push('cinema');
+            }
+        }
+        
+        query += ' ORDER BY releaseYear DESC LIMIT 10';
+        
+        const cameras = await dbAll(query, params);
+        
+        // Parse JSON fields
+        cameras.forEach(camera => {
+            if (camera.specs) camera.specs = JSON.parse(camera.specs);
+            if (camera.features) camera.features = JSON.parse(camera.features);
+        });
+        
+        res.json(cameras);
+    } catch (error) {
+        console.error('Error in camera finder:', error);
+        res.status(500).json({ error: 'Camera finder failed' });
+    }
+});
+
+// Mock networks endpoint (for homepage)
+app.get('/api/networks', async (req, res) => {
+    // This would eventually connect to a productions/networks table
+    const networks = [
+        { id: 'netflix', name: 'Netflix', logo: '🎬' },
+        { id: 'hbo', name: 'HBO', logo: '📺' },
+        { id: 'disney', name: 'Disney+', logo: '🏰' },
+        { id: 'amazon', name: 'Amazon', logo: '📦' },
+        { id: 'apple', name: 'Apple TV+', logo: '🍎' }
+    ];
+    
+    res.json(networks);
+});
+
+// Image proxy endpoint
+app.get('/api/image-proxy', async (req, res) => {
+    try {
+        const { url } = req.query;
+        
+        if (!url) {
+            return res.status(400).send('URL parameter required');
+        }
+        
+        // Check if we have this image cached
+        const cached = await dbGet('SELECT * FROM image_cache WHERE url = ?', [url]);
+        
+        if (cached && cached.localPath && fsSync.existsSync(cached.localPath)) {
+            // Update last accessed time
+            await dbRun('UPDATE image_cache SET lastAccessed = CURRENT_TIMESTAMP WHERE url = ?', [url]);
+            
+            // Serve cached image
+            res.type(cached.contentType || 'image/jpeg');
+            return res.sendFile(path.resolve(cached.localPath));
+        }
+        
+        // Fetch and cache the image
+        const response = await axios.get(url, {
+            responseType: 'arraybuffer',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (compatible; CameraVault/1.0)'
+            }
+        });
+        
+        const buffer = Buffer.from(response.data);
+        const contentType = response.headers['content-type'] || 'image/jpeg';
+        
+        // Generate unique filename
+        const hash = crypto.createHash('md5').update(url).digest('hex');
+        const ext = contentType.split('/')[1] || 'jpg';
+        const filename = `proxy-${hash}.${ext}`;
+        const filepath = path.join(__dirname, 'public', 'images', 'cache', filename);
+        
+        // Ensure cache directory exists
+        await fs.mkdir(path.dirname(filepath), { recursive: true });
+        
+        // Process and save image
+        await sharp(buffer)
+            .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+            .jpeg({ quality: 85 })
+            .toFile(filepath);
+        
+        // Store in cache database
+        await dbRun(`
+            INSERT OR REPLACE INTO image_cache (url, localPath, contentType, size, cachedAt, lastAccessed)
+            VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        `, [url, filepath, contentType, buffer.length]);
+        
+        // Send the image
+        res.type(contentType);
+        res.sendFile(path.resolve(filepath));
+        
+    } catch (error) {
+        console.error('Image proxy error:', error);
+        res.status(500).send('Failed to fetch image');
+    }
+});
+
+// Page routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/cameras', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'cameras.html'));
+});
+
+app.get('/camera/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'camera-detail.html'));
+});
+
+app.get('/camera-finder', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'camera-finder.html'));
+});
+
+app.get('/productions', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'productions.html'));
+});
+
+app.get('/camera-blog', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'camera-blog.html'));
+});
+
+app.get('/search', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'search.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Legal pages
+app.get('/privacy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'privacy.html'));
+});
+
+app.get('/terms', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'terms.html'));
+});
+
+app.get('/dmca', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'dmca.html'));
+});
+
+app.get('/attribution', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'attribution.html'));
+});
+
+app.get('/legal', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'legal.html'));
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+});
+
+// Start server
+app.listen(PORT, () => {
+    console.log(`Camera Manual Vault server running on http://localhost:${PORT}`);
+    console.log(`Database: ${dbPath}`);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\nShutting down gracefully...');
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err);
+        } else {
+            console.log('Database connection closed.');
+        }
+        process.exit(0);
+    });
+});
