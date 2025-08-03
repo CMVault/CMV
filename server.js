@@ -12,6 +12,7 @@ const sqlite3 = require('sqlite3').verbose();
 const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
+const config = require('./config/server.config');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -491,20 +492,108 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Camera Manual Vault server running on http://localhost:${PORT}`);
-    console.log(`Database: ${dbPath}`);
+// Function to find an available port
+async function findAvailablePort(startPort, alternativePorts) {
+    const net = require('net');
+    
+    async function isPortAvailable(port) {
+        return new Promise((resolve) => {
+            const server = net.createServer();
+            server.once('error', () => resolve(false));
+            server.once('listening', () => {
+                server.close();
+                resolve(true);
+            });
+            server.listen(port);
+        });
+    }
+    
+    // Try the preferred port first
+    if (await isPortAvailable(startPort)) {
+        return startPort;
+    }
+    
+    // Try alternative ports
+    for (const port of alternativePorts) {
+        if (await isPortAvailable(port)) {
+            console.log(`Port ${startPort} was busy, using port ${port} instead`);
+            return port;
+        }
+    }
+    
+    throw new Error('No available ports found');
+}
+
+// Start server with automatic port finding
+async function startServer() {
+    try {
+        const availablePort = await findAvailablePort(config.port, config.alternativePorts);
+        
+        const server = app.listen(availablePort, () => {
+            console.log('╔════════════════════════════════════════════╗');
+            console.log('║       Camera Manual Vault Server           ║');
+            console.log('╠════════════════════════════════════════════╣');
+            console.log(`║ Server:   http://localhost:${availablePort}${' '.repeat(16 - availablePort.toString().length)}║`);
+            console.log(`║ Database: ${path.basename(dbPath)}${' '.repeat(25 - path.basename(dbPath).length)}║`);
+            console.log(`║ Mode:     ${config.server.environment}${' '.repeat(29 - config.server.environment.length)}║`);
+            console.log('║ Status:   ✅ Running                       ║');
+            console.log('╚════════════════════════════════════════════╝');
+            console.log('\nPress Ctrl+C to stop the server\n');
+        });
+        
+        // Store server reference for graceful shutdown
+        process.server = server;
+        
+    } catch (error) {
+        console.error('❌ Failed to start server:', error.message);
+        process.exit(1);
+    }
+}
+
+// Graceful shutdown handler
+function gracefulShutdown(signal) {
+    console.log(`\n📴 Received ${signal}, shutting down gracefully...`);
+    
+    if (process.server) {
+        process.server.close(() => {
+            console.log('✅ HTTP server closed');
+            
+            db.close((err) => {
+                if (err) {
+                    console.error('❌ Error closing database:', err);
+                } else {
+                    console.log('✅ Database connection closed');
+                }
+                
+                console.log('👋 Goodbye!');
+                process.exit(0);
+            });
+        });
+        
+        // Force shutdown after 10 seconds
+        setTimeout(() => {
+            console.error('⚠️  Forced shutdown after 10 seconds');
+            process.exit(1);
+        }, 10000);
+    } else {
+        process.exit(0);
+    }
+}
+
+// Register shutdown handlers
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    gracefulShutdown('UNCAUGHT_EXCEPTION');
 });
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-    console.log('\nShutting down gracefully...');
-    db.close((err) => {
-        if (err) {
-            console.error('Error closing database:', err);
-        } else {
-            console.log('Database connection closed.');
-        }
-        process.exit(0);
-    });
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+    gracefulShutdown('UNHANDLED_REJECTION');
 });
+
+// Start the server
+startServer();
