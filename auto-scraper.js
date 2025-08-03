@@ -164,7 +164,7 @@ class AutoCameraScraper {
   async scrapeCameras() {
     console.log('🚀 Starting camera scraping...\n');
 
-    // Example camera data - replace with actual scraping logic
+        // Example camera data - replace with actual scraping logic
     const cameras = [
       {
         brand: 'Canon',
@@ -174,13 +174,15 @@ class AutoCameraScraper {
         releaseYear: 2020,
         msrp: 3899,
         currentPrice: 3299,
-imageUrl: 'https://i.imgur.com/WJyaLG0.jpg', // Using a working image URL        attribution: {
-          source: 'Canon USA',
+        imageUrl: 'https://i.imgur.com/WJyaLG0.jpg',
+        attribution: {
+          source: 'Product Image',
           author: 'Canon Inc.',
-          license: 'Press/Fair Use',
-          text: 'Product image courtesy of Canon USA'
+          license: 'Fair Use',
+          text: 'Product image for educational purposes'
         },
-        description: 'Professional full-frame mirrorless camera with 45MP sensor and 8K video.',,
+        description: 'Professional full-frame mirrorless camera with 45MP sensor and 8K video.',
+        sensor: '45MP Full-Frame CMOS',
         processor: 'DIGIC X',
         mount: 'Canon RF',
         keyFeatures: [
@@ -207,11 +209,12 @@ imageUrl: 'https://i.imgur.com/WJyaLG0.jpg', // Using a working image URL       
         releaseYear: 2022,
         msrp: 3899,
         currentPrice: 3799,
-imageUrl: 'https://i.imgur.com/qN8K9Lp.jpg', // Using a working image URL        attribution: {
-          source: 'Sony Electronics',
+        imageUrl: 'https://i.imgur.com/qN8K9Lp.jpg',
+        attribution: {
+          source: 'Product Image',
           author: 'Sony Corporation',
-          license: 'Press/Fair Use',
-          text: 'Product image courtesy of Sony Electronics'
+          license: 'Fair Use',
+          text: 'Product image for educational purposes'
         },
         description: 'High-resolution mirrorless camera with 61MP sensor and AI processing.',
         sensor: '61MP Full-Frame BSI CMOS',
