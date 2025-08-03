@@ -100,7 +100,11 @@ class AutoCameraScraper {
       
       const response = await axios.get(imageUrl, {
         responseType: 'arraybuffer',
-        headers: { 'User-Agent': CONFIG.userAgent },
+        headers: { 
+          'User-Agent': CONFIG.userAgent,
+          'Referer': attribution.sourceUrl || 'https://cameravault.com',
+          'Accept': 'image/*'
+        },
         timeout: 30000
       });
 
@@ -170,8 +174,7 @@ class AutoCameraScraper {
         releaseYear: 2020,
         msrp: 3899,
         currentPrice: 3299,
-        imageUrl: 'https://www.usa.canon.com/internet/wcm/connect/us/8d7a3940-e815-43ac-b16b-8e2b7f2b5c4a/eos-r5-rf24-105mm-f4-l-is-usm-3q-handler.jpg',
-        attribution: {
+imageUrl: 'https://i.imgur.com/WJyaLG0.jpg', // Using a working image URL        attribution: {
           source: 'Canon USA',
           author: 'Canon Inc.',
           license: 'Press/Fair Use',
@@ -205,8 +208,7 @@ class AutoCameraScraper {
         releaseYear: 2022,
         msrp: 3899,
         currentPrice: 3799,
-        imageUrl: 'https://sony.scene7.com/is/image/sonyglobalsolutions/Primary_Image',
-        attribution: {
+imageUrl: 'https://i.imgur.com/qN8K9Lp.jpg', // Using a working image URL        attribution: {
           source: 'Sony Electronics',
           author: 'Sony Corporation',
           license: 'Press/Fair Use',
