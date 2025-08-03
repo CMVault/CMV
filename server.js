@@ -13,6 +13,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
 const config = require('./config/server.config');
+const automationRoutes = require('./automation-routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +29,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.log('Connected to SQLite database');
     }
 });
+
+// Make database accessible to routes
+app.locals.db = db;
 
 // Middleware
 app.use(helmet({
@@ -478,6 +482,14 @@ app.get('/attribution', (req, res) => {
 
 app.get('/legal', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'legal.html'));
+});
+
+// Automation routes
+app.use(automationRoutes);
+
+// Serve automation monitor
+app.get('/automation-monitor', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'automation-monitor.html'));
 });
 
 // 404 handler
