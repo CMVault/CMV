@@ -180,8 +180,7 @@ imageUrl: 'https://i.imgur.com/WJyaLG0.jpg', // Using a working image URL       
           license: 'Press/Fair Use',
           text: 'Product image courtesy of Canon USA'
         },
-        description: 'Professional full-frame mirrorless camera with 45MP sensor and 8K video.',
-        sensor: '45MP Full-Frame CMOS',
+description: 'Professional full-frame mirrorless camera with 45MP sensor and 8K video.',        sensor: '45MP Full-Frame CMOS',
         processor: 'DIGIC X',
         mount: 'Canon RF',
         keyFeatures: [
