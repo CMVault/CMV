@@ -9,6 +9,8 @@ const sharp = require('sharp');
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
+const CameraAdapter = require('./automation-adapter');
+const adapter = new CameraAdapter();
 
 // Configuration
 const CONFIG = {
