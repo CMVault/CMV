@@ -6,359 +6,282 @@ const sqlite3 = require('sqlite3').verbose();
 const sharp = require('sharp');
 const crypto = require('crypto');
 
-// Configuration
-const CONFIG = {
-  imageDir: './public/images/cameras',
-  thumbDir: './public/images/cameras/thumbs',
-  attributionDir: './data/attributions',
-  manualDir: './data/manuals',
-  imageQuality: 90,
-  thumbnailQuality: 85,
-  mainImageSize: { width: 1200, height: 900 },
-  thumbnailSize: { width: 400, height: 300 },
-  requestDelay: 2000, // 2 seconds between requests
-  userAgent: 'Mozilla/5.0 (compatible; CameraVaultBot/1.0; +https://cameravault.com/bot)'
-};
-
-// Database schema
-const SCHEMA = `
-CREATE TABLE IF NOT EXISTS cameras (
-  id TEXT PRIMARY KEY,
-  brand TEXT NOT NULL,
-  model TEXT NOT NULL,
-  fullName TEXT,
-  category TEXT,
-  releaseYear INTEGER,
-  msrp REAL,
-  currentPrice REAL,
-  imageUrl TEXT,
-  localImagePath TEXT,
-  thumbnailPath TEXT,
-  imageAttribution TEXT,
-  description TEXT,
-  keyFeatures TEXT,
-  sensor TEXT,
-  processor TEXT,
-  mount TEXT,
-  manualUrl TEXT,
-  specs TEXT,
-  lastUpdated DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS image_attributions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  cameraId TEXT,
-  imageUrl TEXT,
-  localPath TEXT,
-  source TEXT,
-  author TEXT,
-  license TEXT,
-  attributionText TEXT,
-  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-`;
-
-class AutoCameraScraper {
-  constructor() {
-    this.db = new sqlite3.Database('./data/camera-vault.db');
-    this.processedCount = 0;
-    this.errorCount = 0;
-  }
-
-  async init() {
-    console.log('🔧 Initializing scraper...\n');
+// Safe filename function - handles ALL special characters
+function createSafeFilename(brand, model) {
+    // Combine brand and model
+    const fullName = `${brand}-${model}`.toLowerCase();
     
-    // Create directories
-    const dirs = [CONFIG.imageDir, CONFIG.thumbDir, CONFIG.attributionDir, CONFIG.manualDir, './logs'];
-    for (const dir of dirs) {
-      await fs.mkdir(dir, { recursive: true });
-    }
+    // Replace problematic characters with hyphens
+    // This handles: /, \, :, *, ?, ", <, >, |, spaces, and multiple hyphens
+    const safeName = fullName
+        .replace(/[\/\\:*?"<>|\s]+/g, '-')  // Replace special chars with hyphen
+        .replace(/\-+/g, '-')               // Replace multiple hyphens with single
+        .replace(/^-+|-+$/g, '');           // Remove leading/trailing hyphens
     
-    // Initialize database
-    await this.runAsync(SCHEMA);
-    console.log('✅ Database initialized\n');
-  }
-
-  runAsync(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err) {
-        if (err) reject(err);
-        else resolve(this);
-      });
-    });
-  }
-
-  generateId(brand, model) {
-    return `${brand}-${model}`.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-  }
-
-  async downloadImage(imageUrl, cameraId, attribution) {
-    try {
-      console.log(`  📷 Downloading image...`);
-      
-      const response = await axios.get(imageUrl, {
-        responseType: 'arraybuffer',
-        headers: { 
-          'User-Agent': CONFIG.userAgent,
-          'Referer': attribution.sourceUrl || 'https://cameravault.com',
-          'Accept': 'image/*'
-        },
-        timeout: 30000
-      });
-
-      const buffer = Buffer.from(response.data);
-      
-      // Generate filenames
-      const mainFilename = `${cameraId}.jpg`;
-      const thumbFilename = `${cameraId}-thumb.jpg`;
-      const mainPath = path.join(CONFIG.imageDir, mainFilename);
-      const thumbPath = path.join(CONFIG.thumbDir, thumbFilename);
-      
-      // Create main image
-      await sharp(buffer)
-        .resize(CONFIG.mainImageSize.width, CONFIG.mainImageSize.height, {
-          fit: 'inside',
-          withoutEnlargement: true
-        })
-        .jpeg({ quality: CONFIG.imageQuality })
-        .toFile(mainPath);
-      
-      // Create thumbnail
-      await sharp(buffer)
-        .resize(CONFIG.thumbnailSize.width, CONFIG.thumbnailSize.height, {
-          fit: 'cover',
-          position: 'centre'
-        })
-        .jpeg({ quality: CONFIG.thumbnailQuality })
-        .toFile(thumbPath);
-
-      // Save attribution
-      await this.runAsync(`
-        INSERT INTO image_attributions (cameraId, imageUrl, localPath, source, author, license, attributionText)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [
-        cameraId,
-        imageUrl,
-        `/images/cameras/${mainFilename}`,
-        attribution.source || 'Unknown',
-        attribution.author || 'Unknown',
-        attribution.license || 'Fair Use',
-        attribution.text || `Image courtesy of ${attribution.source || 'manufacturer'}`
-      ]);
-
-      console.log(`  ✅ Image saved and attributed`);
-      
-      return {
-        main: `/images/cameras/${mainFilename}`,
-        thumbnail: `/images/cameras/thumbs/${thumbFilename}`
-      };
-      
-    } catch (error) {
-      console.error(`  ❌ Image download failed: ${error.message}`);
-      return null;
-    }
-  }
-
-  async scrapeCameras() {
-    console.log('🚀 Starting camera scraping...\n');
-
-        // Example camera data - replace with actual scraping logic
-    const cameras = [
-      {
-        brand: 'Canon',
-        model: 'EOS R5',
-        fullName: 'Canon EOS R5',
-        category: 'mirrorless',
-        releaseYear: 2020,
-        msrp: 3899,
-        currentPrice: 3299,
-        imageUrl: 'https://i.imgur.com/WJyaLG0.jpg',
-        attribution: {
-          source: 'Product Image',
-          author: 'Canon Inc.',
-          license: 'Fair Use',
-          text: 'Product image for educational purposes'
-        },
-        description: 'Professional full-frame mirrorless camera with 45MP sensor and 8K video.',
-        sensor: '45MP Full-Frame CMOS',
-        processor: 'DIGIC X',
-        mount: 'Canon RF',
-        keyFeatures: [
-          '45MP Full-Frame CMOS Sensor',
-          '8K 30p / 4K 120p Video',
-          'In-Body Image Stabilization',
-          'Dual Pixel CMOS AF II',
-          '20 fps Continuous Shooting'
-        ],
-        specs: {
-          megapixels: 45,
-          sensorSize: 'Full Frame',
-          videoResolution: '8K',
-          continuousSpeed: 20,
-          hasIBIS: true,
-          weatherSealed: true
-        }
-      },
-      {
-        brand: 'Sony',
-        model: 'A7R V',
-        fullName: 'Sony Alpha A7R V',
-        category: 'mirrorless',
-        releaseYear: 2022,
-        msrp: 3899,
-        currentPrice: 3799,
-        imageUrl: 'https://i.imgur.com/qN8K9Lp.jpg',
-        attribution: {
-          source: 'Product Image',
-          author: 'Sony Corporation',
-          license: 'Fair Use',
-          text: 'Product image for educational purposes'
-        },
-        description: 'High-resolution mirrorless camera with 61MP sensor and AI processing.',
-        sensor: '61MP Full-Frame BSI CMOS',
-        processor: 'BIONZ XR',
-        mount: 'Sony E',
-        keyFeatures: [
-          '61MP Full-Frame BSI CMOS Sensor',
-          'AI-Based Subject Recognition',
-          '8-Stop Image Stabilization',
-          '8K 24p / 4K 60p Video',
-          '3.2" 4-Axis LCD'
-        ],
-        specs: {
-          megapixels: 61,
-          sensorSize: 'Full Frame',
-          videoResolution: '8K',
-          continuousSpeed: 10,
-          hasIBIS: true,
-          weatherSealed: true
-        }
-      }
-    ];
-
-    // Process each camera
-    for (const camera of cameras) {
-      try {
-        console.log(`📸 Processing: ${camera.fullName}`);
-        
-        camera.id = this.generateId(camera.brand, camera.model);
-        
-        // Download and process image
-        if (camera.imageUrl) {
-          const imagePaths = await this.downloadImage(
-            camera.imageUrl,
-            camera.id,
-            camera.attribution
-          );
-          
-          if (imagePaths) {
-            camera.localImagePath = imagePaths.main;
-            camera.thumbnailPath = imagePaths.thumbnail;
-          }
-        }
-        
-        // Save to database
-        await this.runAsync(`
-          INSERT OR REPLACE INTO cameras (
-            id, brand, model, fullName, category, releaseYear,
-            msrp, currentPrice, imageUrl, localImagePath, thumbnailPath,
-            imageAttribution, description, keyFeatures, sensor, processor,
-            mount, specs
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-          camera.id,
-          camera.brand,
-          camera.model,
-          camera.fullName,
-          camera.category,
-          camera.releaseYear,
-          camera.msrp,
-          camera.currentPrice,
-          camera.imageUrl,
-          camera.localImagePath,
-          camera.thumbnailPath,
-          JSON.stringify(camera.attribution),
-          camera.description,
-          JSON.stringify(camera.keyFeatures),
-          camera.sensor,
-          camera.processor,
-          camera.mount,
-          JSON.stringify(camera.specs)
-        ]);
-        
-        console.log(`  ✅ Saved to database\n`);
-        this.processedCount++;
-        
-        // Respectful delay
-        await new Promise(resolve => setTimeout(resolve, CONFIG.requestDelay));
-        
-      } catch (error) {
-        console.error(`  ❌ Error: ${error.message}\n`);
-        this.errorCount++;
-      }
-    }
-    
-    // Generate attribution report
-    await this.generateAttributionReport();
-  }
-
-  async generateAttributionReport() {
-    const rows = await new Promise((resolve, reject) => {
-      this.db.all('SELECT * FROM image_attributions ORDER BY source, cameraId', (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-    
-    const report = {
-      generated: new Date().toISOString(),
-      totalImages: rows.length,
-      attributions: rows
-    };
-    
-    const reportPath = path.join(CONFIG.attributionDir, 'attribution-report.json');
-    await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
-    
-    console.log(`📄 Generated attribution report: ${rows.length} images\n`);
-  }
-
-  close() {
-    this.db.close();
-  }
+    return safeName;
 }
 
-// Main execution
-async function main() {
-  console.log('\n🤖 CAMERA VAULT AUTO-SCRAPER\n');
-  console.log('================================\n');
-  
-  const scraper = new AutoCameraScraper();
-  
-  try {
-    await scraper.init();
-    await scraper.scrapeCameras();
-    
-    console.log('✨ Scraping Complete!\n');
-    console.log(`📊 Summary:`);
-    console.log(`   Processed: ${scraper.processedCount} cameras`);
-    console.log(`   Errors: ${scraper.errorCount}`);
-    console.log('');
-    
-  } catch (error) {
-    console.error(`\n❌ Fatal error: ${error.message}`);
-    console.error(error);
-    process.exit(1);
-  } finally {
-    scraper.close();
-  }
-}
+class CameraImageScraper {
+    constructor() {
+        this.db = new sqlite3.Database('./data/camera-vault.db');
+        this.headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        };
+        this.brandColors = {
+            'canon': '#dc143c',
+            'nikon': '#f7d417', 
+            'sony': '#ff6b35',
+            'fujifilm': '#00a652',
+            'panasonic': '#0053a0',
+            'olympus': '#004c97',
+            'leica': '#e20612',
+            'hasselblad': '#000000',
+            'red': '#ed1c24',
+            'arri': '#00a0df',
+            'blackmagic': '#ff6900'
+        };
+    }
 
-// Export for use in other scripts
-module.exports = AutoCameraScraper;
+    async scrapeImages() {
+        console.log('🚀 Starting camera image scraping with safe filenames...\n');
+        
+        try {
+            // Ensure directories exist
+            await this.ensureDirectories();
+            
+            // Get cameras needing images
+            const cameras = await this.getCamerasNeedingImages();
+            console.log(`📷 Found ${cameras.length} cameras needing images\n`);
+            
+            if (cameras.length === 0) {
+                console.log('✅ All cameras already have images!');
+                return;
+            }
+            
+            // Process each camera
+            for (const camera of cameras) {
+                await this.processCameraImage(camera);
+                // Add delay to be respectful to servers
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            }
+            
+            console.log('\n✅ Image scraping complete!');
+            
+        } catch (error) {
+            console.error('❌ Scraping error:', error);
+        } finally {
+            this.db.close();
+        }
+    }
+
+    async ensureDirectories() {
+        const dirs = [
+            './public/images/cameras',
+            './public/images/cameras/thumbs',
+            './data/attributions'
+        ];
+        
+        for (const dir of dirs) {
+            await fs.mkdir(dir, { recursive: true });
+        }
+    }
+
+    getCamerasNeedingImages() {
+        return new Promise((resolve, reject) => {
+            const query = `
+                SELECT id, brand, model 
+                FROM cameras 
+                WHERE localImagePath IS NULL 
+                   OR localImagePath = '' 
+                   OR localImagePath NOT LIKE '/images/cameras/%'
+            `;
+            
+            this.db.all(query, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows || []);
+            });
+        });
+    }
+
+    async processCameraImage(camera) {
+        console.log(`\n📸 Processing: ${camera.brand} ${camera.model}`);
+        
+        // Create safe filename
+        const safeFilename = createSafeFilename(camera.brand, camera.model);
+        const imagePath = `/images/cameras/${safeFilename}.jpg`;
+        const fullImagePath = `./public${imagePath}`;
+        const thumbPath = `./public/images/cameras/thumbs/${safeFilename}-thumb.jpg`;
+        
+        console.log(`   Safe filename: ${safeFilename}.jpg`);
+        
+        try {
+            // Try to scrape from B&H Photo
+            const imageUrl = await this.scrapeFromBHPhoto(camera.brand, camera.model);
+            
+            if (imageUrl) {
+                // Download and process the image
+                await this.downloadAndProcessImage(imageUrl, fullImagePath, thumbPath);
+                
+                // Save attribution
+                await this.saveAttribution(camera, imageUrl, imagePath);
+                
+                // Update database with safe path
+                await this.updateDatabase(camera.id, imagePath, imageUrl);
+                
+                console.log(`   ✅ Successfully processed image`);
+            } else {
+                // Create branded placeholder
+                console.log(`   ⚠️  No image found, creating branded placeholder`);
+                await this.createBrandedPlaceholder(camera, fullImagePath, thumbPath);
+                
+                // Update database with placeholder path
+                await this.updateDatabase(camera.id, imagePath, 'placeholder');
+                
+                console.log(`   ✅ Created branded placeholder`);
+            }
+            
+        } catch (error) {
+            console.error(`   ❌ Error processing ${camera.brand} ${camera.model}:`, error.message);
+            
+            // Create placeholder on error
+            await this.createBrandedPlaceholder(camera, fullImagePath, thumbPath);
+            await this.updateDatabase(camera.id, imagePath, 'placeholder');
+        }
+    }
+
+    async scrapeFromBHPhoto(brand, model) {
+        try {
+            // Construct search query
+            const searchQuery = `${brand} ${model} camera`.replace(/\s+/g, '+');
+            const searchUrl = `https://www.bhphotovideo.com/c/search?q=${searchQuery}`;
+            
+            console.log(`   Searching B&H Photo...`);
+            
+            const response = await axios.get(searchUrl, { headers: this.headers });
+            const $ = cheerio.load(response.data);
+            
+            // Find first product image
+            const imageElement = $('img[data-src]').first();
+            let imageUrl = imageElement.attr('data-src') || imageElement.attr('src');
+            
+            if (imageUrl && !imageUrl.startsWith('http')) {
+                imageUrl = `https:${imageUrl}`;
+            }
+            
+            return imageUrl || null;
+            
+        } catch (error) {
+            console.log(`   Could not scrape from B&H: ${error.message}`);
+            return null;
+        }
+    }
+
+    async downloadAndProcessImage(imageUrl, fullImagePath, thumbPath) {
+        // Download image
+        const response = await axios.get(imageUrl, { 
+            responseType: 'arraybuffer',
+            headers: this.headers 
+        });
+        
+        const buffer = Buffer.from(response.data);
+        
+        // Process and save full image (max 1200px wide)
+        await sharp(buffer)
+            .resize(1200, null, { 
+                withoutEnlargement: true,
+                fit: 'inside'
+            })
+            .jpeg({ quality: 85 })
+            .toFile(fullImagePath);
+        
+        // Create thumbnail (300px wide)
+        await sharp(buffer)
+            .resize(300, null, { 
+                withoutEnlargement: true,
+                fit: 'inside'
+            })
+            .jpeg({ quality: 80 })
+            .toFile(thumbPath);
+    }
+
+    async createBrandedPlaceholder(camera, fullImagePath, thumbPath) {
+        const brand = camera.brand.toLowerCase();
+        const bgColor = this.brandColors[brand] || '#333333';
+        const textColor = ['#000000', '#333333'].includes(bgColor) ? '#ffffff' : '#000000';
+        
+        // Create full size placeholder
+        const svg = `
+            <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                <rect width="800" height="600" fill="${bgColor}"/>
+                <text x="400" y="280" text-anchor="middle" fill="${textColor}" 
+                      font-family="Arial, sans-serif" font-size="48" font-weight="bold">
+                    ${camera.brand}
+                </text>
+                <text x="400" y="340" text-anchor="middle" fill="${textColor}" 
+                      font-family="Arial, sans-serif" font-size="36">
+                    ${camera.model}
+                </text>
+                <text x="400" y="420" text-anchor="middle" fill="${textColor}" 
+                      opacity="0.7" font-family="Arial, sans-serif" font-size="20">
+                    Image Coming Soon
+                </text>
+            </svg>
+        `;
+        
+        // Save full size
+        await sharp(Buffer.from(svg))
+            .jpeg({ quality: 85 })
+            .toFile(fullImagePath);
+        
+        // Save thumbnail
+        await sharp(Buffer.from(svg))
+            .resize(300)
+            .jpeg({ quality: 80 })
+            .toFile(thumbPath);
+    }
+
+    async saveAttribution(camera, imageUrl, localPath) {
+        const safeFilename = createSafeFilename(camera.brand, camera.model);
+        const attribution = {
+            camera: `${camera.brand} ${camera.model}`,
+            imageSource: imageUrl.includes('bhphoto') ? 'B&H Photo' : 'Unknown',
+            imageUrl: imageUrl,
+            attribution: `Image courtesy of ${imageUrl.includes('bhphoto') ? 'B&H Photo' : 'retailer'}`,
+            fetchedDate: new Date().toISOString(),
+            localPath: localPath
+        };
+        
+        const attrPath = `./data/attributions/${safeFilename}.json`;
+        await fs.writeFile(attrPath, JSON.stringify(attribution, null, 2));
+    }
+
+    updateDatabase(cameraId, localPath, imageUrl) {
+        return new Promise((resolve, reject) => {
+            const query = `
+                UPDATE cameras 
+                SET localImagePath = ?, 
+                    imageUrl = ?,
+                    imageAttribution = ?,
+                    lastUpdated = datetime('now')
+                WHERE id = ?
+            `;
+            
+            const attribution = imageUrl === 'placeholder' 
+                ? 'Branded placeholder' 
+                : 'Image courtesy of B&H Photo';
+            
+            this.db.run(query, [localPath, imageUrl, attribution, cameraId], (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        });
+    }
+}
 
 // Run if called directly
 if (require.main === module) {
-  main();
+    const scraper = new CameraImageScraper();
+    scraper.scrapeImages().catch(console.error);
 }
+
+module.exports = { CameraImageScraper, createSafeFilename };
