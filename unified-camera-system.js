@@ -319,7 +319,7 @@ class UnifiedCameraSystem {
             });
         });
 
-    scheduleDiscovery() {
+    function scheduleDiscovery() {
         console.log('📅 Schedule set:');
         console.log('   - Discovery: Every 4 hours (200/day limit)');
         console.log('   - Backup: Daily at 3 AM');
