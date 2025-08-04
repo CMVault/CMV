@@ -340,7 +340,7 @@ class UnifiedCameraSystem {
         });
     }
 
-    async createBackup() {
+    async function createBackup() {
         const timestamp = Date.now();
         const backupPath = path.join(__dirname, 'data', `camera-vault-backup-${timestamp}.db`);
         
