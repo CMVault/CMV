@@ -1,5 +1,5 @@
-echo 'const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database("./data/camera-vault.db");
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./data/camera-vault.db');
 
 db.all("SELECT * FROM cameras LIMIT 5", (err, rows) => {
     if (err) {
@@ -16,4 +16,4 @@ db.all("SELECT * FROM cameras LIMIT 5", (err, rows) => {
     }
 });
 
-db.close();' > fix-api-response.js
+db.close();
