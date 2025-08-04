@@ -12,7 +12,6 @@ const { createSafeFilename } = require('./camera-utils');
     function delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-}
 
     function scheduleDiscovery() {
         console.log('📅 Schedule set:');
