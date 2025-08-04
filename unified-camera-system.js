@@ -54,7 +54,7 @@ class UnifiedCameraSystem {
         
         // Schedule runs
         scheduleDiscovery();
-        this.scheduleBackup();
+        scheduleBackup();
     }
 
     async initializeDatabase() {
