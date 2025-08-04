@@ -298,8 +298,8 @@ class UnifiedCameraSystem {
             const query = `
                 INSERT INTO cameras (
                     brand, model, fullName, releaseYear, category, 
-                    sensorSize, megapixels, imageUrl, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                    sensorSize, sensorMegapixels, imageUrl, createdAt
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             `;
             
             this.db.run(query, [
@@ -309,7 +309,7 @@ class UnifiedCameraSystem {
                 camera.releaseYear,
                 camera.category,
                 camera.sensorSize,
-                camera.megapixels,
+                camera.megapixels,  // Map from megapixels to sensorMegapixels column
                 ''
             ], (err) => {
                 if (err) {
@@ -317,6 +317,8 @@ class UnifiedCameraSystem {
                 }
                 resolve();
             });
+        });
+    });
         });
     }
 
