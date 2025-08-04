@@ -319,7 +319,7 @@ class UnifiedCameraSystem {
             });
         });
 
-    function scheduleDiscovery() {
+    function function scheduleDiscovery() {
         console.log('📅 Schedule set:');
         console.log('   - Discovery: Every 4 hours (200/day limit)');
         console.log('   - Backup: Daily at 3 AM');
@@ -332,7 +332,7 @@ class UnifiedCameraSystem {
         });
     }
 
-    function scheduleBackup() {
+    function function scheduleBackup() {
         // Daily backup at 3 AM
         cron.schedule('0 3 * * *', () => {
             console.log('💾 Creating daily backup...');
@@ -340,7 +340,7 @@ class UnifiedCameraSystem {
         });
     }
 
-    async function createBackup() {
+    async function function createBackup() {
         const timestamp = Date.now();
         const backupPath = path.join(__dirname, 'data', `camera-vault-backup-${timestamp}.db`);
         
@@ -355,7 +355,7 @@ class UnifiedCameraSystem {
         }
     }
 
-    function cleanOldBackups() {
+    function function cleanOldBackups() {
         const dataDir = path.join(__dirname, 'data');
         const files = fs.readdirSync(dataDir);
         const backupFiles = files.filter(f => f.startsWith('camera-vault-backup-'));
@@ -372,7 +372,7 @@ class UnifiedCameraSystem {
         }
     }
 
-    delay(ms) {
+    function delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 }
