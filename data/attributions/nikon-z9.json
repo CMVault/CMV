@@ -1,7 +1,9 @@
 {
-  "filename": "nikon-z9",
-  "sourceUrl": "placeholder",
-  "sourceName": "Camera Manual Vault",
-  "downloadedAt": "2025-08-04T00:40:43.042Z",
-  "license": "Fair Use - Educational Purpose"
+  "cameraId": 35,
+  "imageUrl": "https://placeholder.example.com/nikon-z9.jpg",
+  "source": "manufacturer",
+  "attribution": "Image courtesy of Nikon",
+  "productUrl": "https://www.nikon.com",
+  "downloadedAt": "2025-08-04T18:11:54.988Z",
+  "filename": "nikon-z9.jpg"
 }

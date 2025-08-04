@@ -1,7 +1,9 @@
 {
-  "filename": "canon-eos-5d-mark-iv",
-  "sourceUrl": "placeholder",
-  "sourceName": "Camera Manual Vault",
-  "downloadedAt": "2025-08-04T00:40:38.719Z",
-  "license": "Fair Use - Educational Purpose"
+  "cameraId": 26,
+  "imageUrl": "https://placeholder.example.com/canon-eos-5d-mark-iv.jpg",
+  "source": "manufacturer",
+  "attribution": "Image courtesy of Canon",
+  "productUrl": "https://www.canon.com",
+  "downloadedAt": "2025-08-04T18:11:39.957Z",
+  "filename": "canon-eos-5d-mark-iv.jpg"
 }
