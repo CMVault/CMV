@@ -135,20 +135,29 @@ class UnifiedCameraSystem {
     }
 
     async updateMissingImages() {
-        console.log('🖼️  Checking for missing images...');
+        const query = `
+            SELECT id, brand, model 
+            FROM cameras 
+            WHERE localImagePath IS NULL 
+               OR localImagePath = '' 
+               OR localImagePath NOT LIKE '/images/cameras/%' 
+            LIMIT 50
+        `;
         
-        const cameras = await new Promise((resolve, reject) => {
-            this.db.all(`
-                SELECT id, brand, model 
-                FROM cameras 
-                WHERE localImagePath IS NULL 
-                   OR localImagePath = '' 
-                   OR localImagePath NOT LIKE '/images/cameras/%'
-                LIMIT 50
-            `, (err, rows) => {
-                if (err) reject(err);
-                else resolve(rows || []);
-            });
+        this.db.all(query, [], async (err, cameras) => {
+            if (err) {
+                console.error('❌ Error checking for missing images:', err);
+                return;
+            }
+            
+            if (cameras && cameras.length > 0) {
+                console.log(`🖼️  Found ${cameras.length} cameras with missing images`);
+                for (const camera of cameras) {
+                    await this.downloadAndSaveImage(camera);
+                }
+            }
+        });
+    });
         });
         
         console.log(`   Found ${cameras.length} cameras needing images`);
