@@ -378,5 +378,6 @@ class UnifiedCameraSystem {
 }
 
 // Start the system
-// const system = new UnifiedCameraSystem();
-// system.start().catch(console.error);
+}
+const system = new UnifiedCameraSystem();
+system.start().catch(console.error);
