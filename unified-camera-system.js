@@ -332,7 +332,7 @@ class UnifiedCameraSystem {
         });
     }
 
-    scheduleBackup() {
+    function scheduleBackup() {
         // Daily backup at 3 AM
         cron.schedule('0 3 * * *', () => {
             console.log('💾 Creating daily backup...');
@@ -355,7 +355,7 @@ class UnifiedCameraSystem {
         }
     }
 
-    cleanOldBackups() {
+    function cleanOldBackups() {
         const dataDir = path.join(__dirname, 'data');
         const files = fs.readdirSync(dataDir);
         const backupFiles = files.filter(f => f.startsWith('camera-vault-backup-'));
