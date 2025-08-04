@@ -1,4 +1,3 @@
-// Utility functions for camera system
 function createSafeFilename(brand, model) {
     const fullName = `${brand}-${model}`.toLowerCase();
     const safeName = fullName
