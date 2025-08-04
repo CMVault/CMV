@@ -8,6 +8,26 @@ const crypto = require('crypto');
 const cron = require('node-cron');
 const { createSafeFilename } = require('./camera-utils');
 
+// Helper functions
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+}
+
+    function scheduleDiscovery() {
+        console.log('📅 Schedule set:');
+        console.log('   - Discovery: Every 4 hours (200/day limit)');
+        console.log('   - Backup: Daily at 3 AM');
+        console.log('');
+        
+        // Run every 4 hours
+        cron.schedule('0 */4 * * *', () => {
+            console.log('⏰ Scheduled discovery run starting...');
+            this.runDiscovery();
+        });
+    }
+
+
 class UnifiedCameraSystem {
     constructor() {
         this.dbPath = path.join(__dirname, 'data', 'camera-vault.db');
@@ -319,18 +339,6 @@ class UnifiedCameraSystem {
             });
         });
 
-    function scheduleDiscovery() {
-        console.log('📅 Schedule set:');
-        console.log('   - Discovery: Every 4 hours (200/day limit)');
-        console.log('   - Backup: Daily at 3 AM');
-        console.log('');
-        
-        // Run every 4 hours
-        cron.schedule('0 */4 * * *', () => {
-            console.log('⏰ Scheduled discovery run starting...');
-            this.runDiscovery();
-        });
-    }
 
     function scheduleBackup() {
         // Daily backup at 3 AM
@@ -372,10 +380,6 @@ class UnifiedCameraSystem {
         }
     }
 
-    function delay(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-}
 
 // Start the system
 }
