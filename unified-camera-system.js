@@ -26,6 +26,12 @@ const { createSafeFilename } = require('./camera-utils');
         });
     }
 
+function scheduleBackup() {
+    console.log('📅 Scheduling daily backup at 3 AM');
+    // This will be implemented later
+}
+
+
 
 class UnifiedCameraSystem {
     constructor() {
