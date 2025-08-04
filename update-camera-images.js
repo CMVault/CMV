@@ -26,11 +26,11 @@ async function updateCameraImages() {
         db.all(`
             SELECT id, brand, model, imageUrl, localImagePath 
             FROM cameras 
-            WHERE localImagePath LIKE '%placeholder%' 
-               OR localImagePath IS NULL 
-               OR imageUrl IS NULL
+            WHERE localImagePath IS NULL 
+               OR localImagePath = ''
+               OR localImagePath LIKE '%placeholder%'
+               OR localImagePath NOT LIKE '/images/cameras/%'
             ORDER BY brand, model
-            LIMIT 50
         `, (err, rows) => {
             if (err) reject(err);
             else resolve(rows);
@@ -46,7 +46,7 @@ async function updateCameraImages() {
         
         try {
             // Generate filenames
-            const filename = `${camera.brand.toLowerCase()}-${camera.model.toLowerCase().replace(/\s+/g, '-')}.jpg`;
+            const filename = `${camera.brand.toLowerCase()}-${camera.model.toLowerCase().replace(/[\s\/]+/g, '-')}.jpg`;
             const imagePath = path.join(imageDir, filename);
             const thumbPath = path.join(thumbDir, filename.replace('.jpg', '-thumb.jpg'));
             
