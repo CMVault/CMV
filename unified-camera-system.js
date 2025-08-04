@@ -318,9 +318,6 @@ class UnifiedCameraSystem {
                 resolve();
             });
         });
-    });
-        });
-    }
 
     scheduleDiscovery() {
         console.log('📅 Schedule set:');
