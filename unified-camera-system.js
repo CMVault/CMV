@@ -380,7 +380,7 @@ class UnifiedCameraSystem {
     }
 
 
-// Start the system
+}// Start the system
 }
 const system = new UnifiedCameraSystem();
 system.start().catch(console.error);
