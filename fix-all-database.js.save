@@ -1,0 +1,176 @@
+#!/usr/bin/env node
+
+// fix-all-database.js
+// Complete database schema fix for CMV
+
+const sqlite3 = require('sqlite3').verbose();
+const fs = require('fs');
+
+console.log('🔧 Complete Database Fix Script');
+console.log('================================\n');
+
+// Connect to database
+const db = new sqlite3.Database('./data/camera-vault.db', (err) => {
+  if (err) {
+    console.error('❌ Failed to connect to database:', err);
+    process.exit(1);
+  }
+  
+  console.log('✅ Connected to database\n');
+  
+  // Define all required columns
+  const cameraColumns = [
+    { name: 'image_path', type: 'TEXT' },
+    { name: 'thumbnail_path', type: 'TEXT' },
+    { name: 'manual_url', type: 'TEXT' }
+  ];
+  
+  const attributionColumns = [
+    { name: 'filename', type: 'TEXT' },
+    { name: 'source_url', type: 'TEXT' },
+    { name: 'source_name', type: 'TEXT' },
+    { name: 'attribution_text', type: 'TEXT' },
+    { name: 'downloaded_at', type: 'TEXT' }
+  ];
+  
+  let fixCount = 0;
+  let errorCount = 0;
+  
+  console.log('📋 Checking cameras table...');
+  
+  // Fix cameras table
+  db.all("PRAGMA table_info(cameras)", (err, existingColumns) => {
+    if (err) {
+      console.error('❌ Error checking cameras table:', err);
+      errorCount++;
+      return;
+    }
+    
+    const existingNames = existingColumns.map(col => col.name);
+    
+    cameraColumns.forEach(column => {
+      if (!existingNames.includes(column.name)) {
+        db.run(`ALTER TABLE cameras ADD COLUMN ${column.name} ${column.type}`, (err) => {
+          if (err) {
+            console.error(`❌ Error adding ${column.name}:`, err.message);
+            errorCount++;
+          } else {
+            console.log(`✅ Added ${column.name} to cameras table`);
+            fixCount++;
+          }
+        });
+      } else {
+        console.log(`✓ Column ${column.name} already exists in cameras`);
+      }
+    });
+    
+    // Now fix image_attributions table
+    setTimeout(() => {
+      console.log('\n📋 Checking image_attributions table...');
+      
+      // First check if table exists
+      db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='image_attributions'", (err, row) => {
+        if (err || !row) {
+          console.log('⚠️  image_attributions table not found, creating it...');
+          
+          db.run(`CREATE TABLE IF NOT EXISTS image_attributions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            source_url TEXT,
+            source_name TEXT,
+            attribution_text TEXT,
+            downloaded_at TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+          )`, (err) => {
+            if (err) {
+              console.error('❌ Error creating image_attributions table:', err);
+              errorCount++;
+              finishUp();
+            } else {
+              console.log('✅ Created image_attributions table');
+              fixCount++;
+              finishUp();
+            }
+          });
+        } else {
+          // Table exists, check columns
+          db.all("PRAGMA table_info(image_attributions)", (err, existingColumns) => {
+            if (err) {
+              console.error('❌ Error checking image_attributions table:', err);
+              errorCount++;
+              finishUp();
+              return;
+            }
+            
+            const existingNames = existingColumns.map(col => col.name);
+            let pendingFixes = attributionColumns.length;
+            
+            attributionColumns.forEach(column => {
+              if (!existingNames.includes(column.name)) {
+                db.run(`ALTER TABLE image_attributions ADD COLUMN ${column.name} ${column.type}`, (err) => {
+                  if (err) {
+                    console.error(`❌ Error adding ${column.name}:`, err.message);
+                    errorCount++;
+                  } else {
+                    console.log(`✅ Added ${column.name} to image_attributions table`);
+                    fixCount++;
+                  }
+                  pendingFixes--;
+                  if (pendingFixes === 0) {
+                    finishUp();
+                  }
+                });
+              } else {
+                console.log(`✓ Column ${column.name} already exists in image_attributions`);
+                pendingFixes--;
+                if (pendingFixes === 0) {
+                  finishUp();
+                }
+              }
+            });
+          });
+        }
+      });
+    }, 1000);
+  });
+  
+  function finishUp() {
+    setTimeout(() => {
+      console.log('\n📊 Final Schema Check:');
+      console.log('====================');
+      
+      // Show final schema
+      db.all("PRAGMA table_info(cameras)", (err, columns) => {
+        if (!err) {
+          console.log('\nCameras table columns:');
+          columns.forEach(col => {
+            console.log(`  ${col.name} (${col.type})`);
+          });
+        }
+        
+        db.all("PRAGMA table_info(image_attributions)", (err, columns) => {
+          if (!err) {
+            console.log('\nImage attributions table columns:');
+            columns.forEach(col => {
+              console.log(`  ${col.name} (${col.type})`);
+            });
+          }
+          
+          console.log('\n' + '='.repeat(50));
+          console.log(`✅ Fix Summary: ${fixCount} fixes applied, ${errorCount} errors`);
+          console.log('='.repeat(50));
+          
+          if (errorCount === 0) {
+            console.log('\n🎉 All database issues fixed successfully!');
+            console.log('\nYou can now run:');
+            console.log('  node cmv-automation-with-images.js');
+          } else {
+            console.log('\n⚠️  Some errors occurred. Check messages above.');
+          }
+          
+          db.close();
+        });
+      });
+    }, 500);
+  }
+});
