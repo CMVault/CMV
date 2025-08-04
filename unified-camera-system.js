@@ -34,7 +34,7 @@ class UnifiedCameraSystem {
         await this.runDiscovery();
         
         // Schedule runs
-        this.scheduleDiscovery();
+        scheduleDiscovery();
         this.scheduleBackup();
     }
 
@@ -225,7 +225,7 @@ class UnifiedCameraSystem {
             if (this.todayCount >= this.DAILY_LIMIT) break;
             
             await this.searchBrand(brand);
-            await this.delay(2000); // Be respectful
+            await delay(2000); // Be respectful
         }
         
         console.log(`📊 Discovery complete. Today's total: ${this.todayCount}/${this.DAILY_LIMIT}`);
