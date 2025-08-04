@@ -1,108 +1,108 @@
 {
-  "timestamp": "2025-08-04T00:29:48.818Z",
+  "timestamp": "2025-08-04T00:30:26.358Z",
   "stats": {
     "camerasAdded": 0,
     "imagesDownloaded": 0,
     "errors": [
       {
-        "camera": "Nikon Z6 III",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.735Z"
-      },
-      {
-        "camera": "Canon EOS R6",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.735Z"
-      },
-      {
-        "camera": "Canon EOS R7",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.752Z"
-      },
-      {
-        "camera": "Canon EOS 5D Mark IV",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.766Z"
-      },
-      {
-        "camera": "Sony A7 IV",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.771Z"
-      },
-      {
-        "camera": "Sony A7S III",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.784Z"
-      },
-      {
-        "camera": "Sony FX6",
-        "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.791Z"
-      },
-      {
         "camera": "Nikon Z9",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.802Z"
+        "timestamp": "2025-08-04T00:30:05.206Z"
       },
       {
-        "camera": "Nikon D850",
+        "camera": "Nikon Z6 III",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.814Z"
+        "timestamp": "2025-08-04T00:30:05.223Z"
       },
       {
         "camera": "Sony FX3",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:27.838Z"
+        "timestamp": "2025-08-04T00:30:05.225Z"
       },
       {
-        "camera": "Leica M6",
+        "camera": "Sony A7S III",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.738Z"
+        "timestamp": "2025-08-04T00:30:05.239Z"
       },
       {
-        "camera": "Fujifilm X-T5",
+        "camera": "Sony A7 IV",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.741Z"
+        "timestamp": "2025-08-04T00:30:05.267Z"
       },
       {
-        "camera": "Canon AE-1",
+        "camera": "Nikon D850",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.742Z"
+        "timestamp": "2025-08-04T00:30:05.268Z"
       },
       {
-        "camera": "Blackmagic URSA Mini Pro 12K",
+        "camera": "Canon EOS 5D Mark IV",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.749Z"
+        "timestamp": "2025-08-04T00:30:05.310Z"
       },
       {
-        "camera": "Fujifilm GFX 100 II",
+        "camera": "Canon EOS R6",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.754Z"
+        "timestamp": "2025-08-04T00:30:05.317Z"
       },
       {
-        "camera": "ARRI ALEXA Mini LF",
+        "camera": "Sony FX6",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.763Z"
+        "timestamp": "2025-08-04T00:30:05.324Z"
       },
       {
-        "camera": "Hasselblad 500C/M",
+        "camera": "Canon EOS R7",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.769Z"
+        "timestamp": "2025-08-04T00:30:05.368Z"
       },
       {
         "camera": "RED KOMODO",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.770Z"
+        "timestamp": "2025-08-04T00:30:26.210Z"
       },
       {
-        "camera": "Fujifilm X-H2S",
+        "camera": "Canon AE-1",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.780Z"
+        "timestamp": "2025-08-04T00:30:26.212Z"
+      },
+      {
+        "camera": "Blackmagic URSA Mini Pro 12K",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.252Z"
+      },
+      {
+        "camera": "Hasselblad 500C/M",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.280Z"
       },
       {
         "camera": "Nikon F3",
         "error": "SQLITE_ERROR: table cameras has no column named full_name",
-        "timestamp": "2025-08-04T00:29:48.818Z"
+        "timestamp": "2025-08-04T00:30:26.291Z"
+      },
+      {
+        "camera": "Fujifilm X-H2S",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.308Z"
+      },
+      {
+        "camera": "ARRI ALEXA Mini LF",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.338Z"
+      },
+      {
+        "camera": "Fujifilm X-T5",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.346Z"
+      },
+      {
+        "camera": "Fujifilm GFX 100 II",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.351Z"
+      },
+      {
+        "camera": "Leica M6",
+        "error": "SQLITE_ERROR: table cameras has no column named full_name",
+        "timestamp": "2025-08-04T00:30:26.358Z"
       }
     ],
     "lastRun": null
@@ -113,5 +113,5 @@
     "camerasWithManuals": 0,
     "camerasWithImages": 0
   },
-  "nextRun": "2025-08-04T06:29:48.819Z"
+  "nextRun": "2025-08-04T06:30:26.358Z"
 }
