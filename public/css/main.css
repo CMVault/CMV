@@ -1,34 +1,27 @@
 /* ============================================
    CAMERA VAULT - OFFICIAL STYLE GUIDE
-   
-   This is the authoritative CSS that ALL pages must use.
-   Copy this EXACTLY for consistent design.
    ============================================ */
 
-/* === VARIABLES START === */
-/* ===========================================
-   1. CSS VARIABLES (Required for all pages)
-   =========================================== */
 :root {
     /* Original Color Scheme */
-    --primary-dark: #1a1a1a;        /* Header/footer background */
-    --primary-red: #e74c3c;         /* Primary accent color */
-    --secondary-blue: #3498db;      /* Secondary accent */
-    --success-green: #2ecc71;       /* Success states */
-    --warning-yellow: #f39c12;      /* Warnings */
+    --primary-dark: #1a1a1a;
+    --primary-red: #e74c3c;
+    --secondary-blue: #3498db;
+    --success-green: #2ecc71;
+    --warning-yellow: #f39c12;
     
     /* Text Colors */
-    --text-light: #ecf0f1;          /* Light text on dark bg */
-    --text-dark: #2c3e50;           /* Dark text on light bg */
-    --text-muted: #7f8c8d;          /* Muted/secondary text */
+    --text-light: #ecf0f1;
+    --text-dark: #2c3e50;
+    --text-muted: #7f8c8d;
     
     /* Background Colors */
-    --bg-dark: #2c3e50;             /* Dark sections */
-    --bg-light: #f8f9fa;            /* Light page background */
-    --bg-white: #ffffff;            /* Card backgrounds */
+    --bg-dark: #2c3e50;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
     
     /* UI Colors */
-    --border-color: #ddd;           /* Default borders */
+    --border-color: #ddd;
     --shadow-light: rgba(0,0,0,0.1);
     --shadow-medium: rgba(0,0,0,0.15);
     --shadow-dark: rgba(0,0,0,0.25);
@@ -52,12 +45,7 @@
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
-/* === VARIABLES END === */
 
-/* === BASE STYLES START === */
-/* ===========================================
-   2. BASE STYLES (Required foundation)
-   =========================================== */
 * {
     margin: 0;
     padding: 0;
@@ -70,49 +58,8 @@ body {
     line-height: 1.6;
     color: var(--text-dark);
     background-color: var(--bg-light);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-/* === BASE STYLES END === */
-
-/* === TYPOGRAPHY START === */
-/* ===========================================
-   3. TYPOGRAPHY (Use these exactly)
-   =========================================== */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: var(--spacing-md);
-    color: var(--text-dark);
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
-h5 { font-size: 1.125rem; }
-h6 { font-size: 1rem; }
-
-p {
-    margin-bottom: var(--spacing-md);
-}
-
-a {
-    color: var(--primary-red);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-}
-
-a:hover {
-    color: var(--secondary-blue);
-    text-decoration: underline;
-}
-/* === TYPOGRAPHY END === */
-
-/* === LAYOUT START === */
-/* ===========================================
-   4. LAYOUT COMPONENTS (Required structure)
-   =========================================== */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -120,25 +67,10 @@ a:hover {
 }
 
 .page-content {
-    min-height: calc(100vh - 400px); /* Accounting for header/footer */
+    min-height: calc(100vh - 400px);
     padding: var(--spacing-xxl) 0;
 }
 
-/* Grid System */
-.grid {
-    display: grid;
-    gap: var(--spacing-lg);
-}
-
-.grid-2 { grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); }
-.grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-.grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-/* === LAYOUT END === */
-
-/* === HEADER START === */
-/* ===========================================
-   5. HEADER (Must match exactly)
-   =========================================== */
 .site-header {
     background-color: var(--primary-dark);
     color: var(--text-light);
@@ -183,19 +115,14 @@ a:hover {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-sm);
     transition: background-color var(--transition-fast);
+    text-decoration: none;
 }
 
 .main-nav a:hover,
 .main-nav a.active {
     background-color: rgba(255, 255, 255, 0.1);
-    text-decoration: none;
 }
-/* === HEADER END === */
 
-/* === BUTTONS START === */
-/* ===========================================
-   6. BUTTONS (Use these classes)
-   =========================================== */
 .btn {
     display: inline-block;
     padding: var(--spacing-sm) var(--spacing-lg);
@@ -220,22 +147,6 @@ a:hover {
     box-shadow: 0 4px 12px var(--shadow-medium);
 }
 
-.btn-secondary {
-    background-color: white;
-    color: var(--text-dark);
-    border: 2px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    border-color: var(--primary-red);
-    color: var(--primary-red);
-}
-/* === BUTTONS END === */
-
-/* === CARDS START === */
-/* ===========================================
-   7. CARDS (Standard card design)
-   =========================================== */
 .card {
     background-color: var(--bg-white);
     border-radius: var(--radius-lg);
@@ -249,63 +160,6 @@ a:hover {
     box-shadow: 0 5px 20px var(--shadow-medium);
 }
 
-.card-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    margin-bottom: var(--spacing-md);
-}
-
-.card-title {
-    font-size: 1.25rem;
-    margin-bottom: var(--spacing-sm);
-}
-
-.card-meta {
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    margin-bottom: var(--spacing-md);
-}
-/* === CARDS END === */
-
-/* === FORMS START === */
-/* ===========================================
-   8. FORMS (Consistent form styling)
-   =========================================== */
-.form-group {
-    margin-bottom: var(--spacing-lg);
-}
-
-.form-label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: var(--spacing-sm);
-}
-
-.form-input,
-.form-select,
-.form-textarea {
-    width: 100%;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    font-size: 1rem;
-    transition: border-color var(--transition-fast);
-}
-
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-    outline: none;
-    border-color: var(--primary-red);
-}
-/* === FORMS END === */
-
-/* === FOOTER START === */
-/* ===========================================
-   9. FOOTER (Must match exactly)
-   =========================================== */
 .site-footer {
     background-color: var(--primary-dark);
     color: var(--text-light);
@@ -335,65 +189,55 @@ a:hover {
 .footer-section a {
     color: var(--text-light);
     opacity: 0.8;
+    text-decoration: none;
 }
 
 .footer-section a:hover {
     opacity: 1;
-    text-decoration: none;
 }
-/* === FOOTER END === */
 
-/* === UTILITIES START === */
-/* ===========================================
-   10. UTILITY CLASSES (Use these helpers)
-   =========================================== */
+/* Utility Classes */
 .text-center { text-align: center; }
-.text-right { text-align: right; }
 .text-muted { color: var(--text-muted); }
-.text-small { font-size: 0.875rem; }
-.text-large { font-size: 1.25rem; }
-
-.mt-0 { margin-top: 0; }
 .mt-1 { margin-top: var(--spacing-sm); }
 .mt-2 { margin-top: var(--spacing-md); }
 .mt-3 { margin-top: var(--spacing-lg); }
 .mt-4 { margin-top: var(--spacing-xl); }
 .mt-5 { margin-top: var(--spacing-xxl); }
+.loading { text-align: center; padding: var(--spacing-xxl); color: var(--text-muted); }
+.error { background-color: #fee; color: #c33; padding: var(--spacing-md); border-radius: var(--radius-sm); }
+.success { background-color: #efe; color: #3c3; padding: var(--spacing-md); border-radius: var(--radius-sm); }
 
-.mb-0 { margin-bottom: 0; }
-.mb-1 { margin-bottom: var(--spacing-sm); }
-.mb-2 { margin-bottom: var(--spacing-md); }
-.mb-3 { margin-bottom: var(--spacing-lg); }
-.mb-4 { margin-bottom: var(--spacing-xl); }
-.mb-5 { margin-bottom: var(--spacing-xxl); }
-
-.loading {
-    text-align: center;
-    padding: var(--spacing-xxl);
-    color: var(--text-muted);
-}
-
-.error {
-    background-color: #fee;
-    color: #c33;
-    padding: var(--spacing-md);
+/* Form Elements */
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
-    margin-bottom: var(--spacing-lg);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast);
 }
 
-.success {
-    background-color: #efe;
-    color: #3c3;
-    padding: var(--spacing-md);
-    border-radius: var(--radius-sm);
-    margin-bottom: var(--spacing-lg);
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-red);
 }
-/* === UTILITIES END === */
 
-/* === RESPONSIVE START === */
-/* ===========================================
-   11. RESPONSIVE DESIGN
-   =========================================== */
+/* Grid System */
+.grid {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); }
+.grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+/* Responsive */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -405,24 +249,9 @@ a:hover {
         justify-content: center;
     }
     
-    h1 { font-size: 2rem; }
-    h2 { font-size: 1.5rem; }
-    h3 { font-size: 1.25rem; }
-    
     .grid-2,
     .grid-3,
     .grid-4 {
         grid-template-columns: 1fr;
     }
 }
-/* === RESPONSIVE END === */
-
-/* ===========================================
-   END OF STYLE GUIDE
-   
-   IMPORTANT: When creating new pages:
-   1. Link to this CSS file
-   2. Use only these classes
-   3. Don't create conflicting styles
-   4. Test on mobile
-   =========================================== */
