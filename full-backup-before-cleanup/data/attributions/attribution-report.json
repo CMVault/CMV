@@ -1,0 +1,126 @@
+{
+  "generated": "2025-08-04T18:12:02.930Z",
+  "totalImages": 23,
+  "sources": {
+    "generated": [
+      {
+        "camera": "arri-alexa-mini-lf",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:36.328Z"
+      },
+      {
+        "camera": "blackmagic-ursa-mini-pro-12k",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:37.660Z"
+      },
+      {
+        "camera": "fujifilm-gfx-100-ii",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:44.710Z"
+      },
+      {
+        "camera": "fujifilm-x-h2s",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:45.839Z"
+      },
+      {
+        "camera": "fujifilm-x-t5",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:47.040Z"
+      },
+      {
+        "camera": "leica-m6",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:49.422Z"
+      },
+      {
+        "camera": "red-komodo",
+        "attribution": "Generated placeholder",
+        "downloadedAt": "2025-08-04T18:11:56.320Z"
+      }
+    ],
+    "manufacturer": [
+      {
+        "camera": "canon-ae-1",
+        "attribution": "Image courtesy of Canon",
+        "downloadedAt": "2025-08-04T18:11:38.773Z"
+      },
+      {
+        "camera": "canon-eos-5d-mark-iv",
+        "attribution": "Image courtesy of Canon",
+        "downloadedAt": "2025-08-04T18:11:39.957Z"
+      },
+      {
+        "camera": "canon-eos-r5",
+        "attribution": "Image courtesy of Canon",
+        "downloadedAt": "2025-08-04T18:11:41.102Z"
+      },
+      {
+        "camera": "canon-eos-r6",
+        "attribution": "Image courtesy of Canon",
+        "downloadedAt": "2025-08-04T18:11:42.390Z"
+      },
+      {
+        "camera": "canon-eos-r7",
+        "attribution": "Image courtesy of Canon",
+        "downloadedAt": "2025-08-04T18:11:43.549Z"
+      },
+      {
+        "camera": "nikon-d780",
+        "attribution": "Image courtesy of Nikon",
+        "downloadedAt": "2025-08-04T18:11:50.532Z"
+      },
+      {
+        "camera": "nikon-d850",
+        "attribution": "Image courtesy of Nikon",
+        "downloadedAt": "2025-08-04T18:11:51.683Z"
+      },
+      {
+        "camera": "nikon-f3",
+        "attribution": "Image courtesy of Nikon",
+        "downloadedAt": "2025-08-04T18:11:52.773Z"
+      },
+      {
+        "camera": "nikon-z6-iii",
+        "attribution": "Image courtesy of Nikon",
+        "downloadedAt": "2025-08-04T18:11:53.865Z"
+      },
+      {
+        "camera": "nikon-z9",
+        "attribution": "Image courtesy of Nikon",
+        "downloadedAt": "2025-08-04T18:11:54.988Z"
+      },
+      {
+        "camera": "sony-a7-iv",
+        "attribution": "Image courtesy of Sony",
+        "downloadedAt": "2025-08-04T18:11:57.428Z"
+      },
+      {
+        "camera": "sony-a7r-v",
+        "attribution": "Image courtesy of Sony",
+        "downloadedAt": "2025-08-04T18:11:58.547Z"
+      },
+      {
+        "camera": "sony-a7s-iii",
+        "attribution": "Image courtesy of Sony",
+        "downloadedAt": "2025-08-04T18:11:59.666Z"
+      },
+      {
+        "camera": "sony-fx3",
+        "attribution": "Image courtesy of Sony",
+        "downloadedAt": "2025-08-04T18:12:00.801Z"
+      },
+      {
+        "camera": "sony-fx6",
+        "attribution": "Image courtesy of Sony",
+        "downloadedAt": "2025-08-04T18:12:01.914Z"
+      }
+    ],
+    "unknown": [
+      {
+        "camera": "hasselblad-500c-m",
+        "downloadedAt": "2025-08-04T00:41:04.434Z"
+      }
+    ]
+  }
+}

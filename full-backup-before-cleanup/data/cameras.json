@@ -1,0 +1,14 @@
+{
+  "cameras": [
+    {
+      "id": "canon-r5-test",
+      "brand": "Canon",
+      "model": "EOS R5",
+      "fullName": "Canon EOS R5",
+      "category": "mirrorless",
+      "releaseYear": 2020,
+      "price": 3899
+    }
+  ],
+  "lastUpdated": "2025-07-29T19:32:47Z"
+}
