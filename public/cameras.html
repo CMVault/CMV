@@ -4,120 +4,321 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camera Database - Camera Manual Vault</title>
+    <!-- Link to the official CSS file -->
     <link rel="stylesheet" href="/css/main.css">
     <style>
-        .camera-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
+        /* Additional styles that extend the official style guide */
+        .alphabet-nav {
+            margin-bottom: var(--spacing-xl);
         }
-        
-        .camera-card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
-        
-        .camera-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-        }
-        
-        .camera-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #f0f0f0;
-        }
-        
-        .camera-info {
-            padding: 1.5rem;
-        }
-        
-        .camera-brand {
-            color: #666;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            margin-bottom: 0.5rem;
-        }
-        
-        .camera-model {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-        
-        .camera-specs {
+
+        .alphabet-buttons {
             display: flex;
-            gap: 0.5rem;
             flex-wrap: wrap;
-            margin-bottom: 1rem;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
         }
-        
-        .spec-badge {
-            background: #f0f0f0;
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.85rem;
+
+        .letter-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition-fast);
+            font-family: inherit;
+            font-size: 0.9rem;
         }
-        
-        .camera-meta {
+
+        .letter-btn:hover {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+            transform: translateY(-2px);
+        }
+
+        .letter-btn.active {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        .letter-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: var(--bg-light);
+        }
+
+        .search-bar {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .search-input-group {
+            display: flex;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .filter-select {
+            min-width: 150px;
+        }
+
+        .camera-list-container {
+            /* Uses the .card class from official CSS */
+        }
+
+        .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .manual-link {
-            color: #3498db;
+
+        .results-count {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .view-options {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .view-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-white);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            color: var(--text-dark);
+            font-family: inherit;
+        }
+
+        .view-btn:hover {
+            background: var(--bg-light);
+        }
+
+        .view-btn.active {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        /* Camera List Styles */
+        .camera-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .camera-list-item {
+            display: flex;
+            align-items: center;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition-fast);
+            cursor: pointer;
+        }
+
+        .camera-list-item:hover {
+            background: var(--bg-light);
+        }
+
+        .camera-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .camera-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-right: var(--spacing-lg);
+            background: var(--bg-light);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+        }
+
+        .camera-list-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .camera-list-details {
+            flex: 1;
+        }
+
+        .camera-list-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            transition: color var(--transition-fast);
+        }
+
+        .camera-list-name:hover {
+            color: var(--primary-red);
             text-decoration: none;
         }
-        
-        .manual-link:hover {
-            text-decoration: underline;
+
+        .camera-list-meta {
+            display: flex;
+            gap: var(--spacing-md);
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
-        
-        .stats-bar {
-            background: #f8f9fa;
-            padding: 2rem;
+
+        .camera-list-specs {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+
+        .camera-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-red);
+        }
+
+        .manual-indicator {
+            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--success-green);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .no-manual {
+            background: var(--text-muted);
+        }
+
+        /* Camera Grid using official grid classes */
+        .camera-grid {
+            /* Will use .grid and .grid-4 classes */
+        }
+
+        .camera-grid-item {
             text-align: center;
-            border-bottom: 1px solid #dee2e6;
+            transition: var(--transition-normal);
+            cursor: pointer;
         }
-        
-        .stats {
+
+        .camera-grid-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .camera-grid-image {
+            width: 100%;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: var(--spacing-md);
+            background: var(--bg-light);
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+        }
+
+        .camera-grid-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            text-decoration: none;
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.1rem;
+        }
+
+        .camera-grid-name:hover {
+            color: var(--primary-red);
+            text-decoration: none;
+        }
+
+        .camera-grid-year {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Pagination */
+        .pagination {
             display: flex;
             justify-content: center;
-            gap: 4rem;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
         }
-        
-        .stat-item {
+
+        .page-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            background: var(--bg-white);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: var(--transition-fast);
+            min-width: 40px;
             text-align: center;
+            color: var(--text-dark);
+            font-family: inherit;
         }
-        
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #e74c3c;
+
+        .page-btn:hover {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
         }
-        
-        .stat-label {
-            color: #6c757d;
-            text-transform: uppercase;
-            font-size: 0.875rem;
+
+        .page-btn.active {
+            background: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--bg-light);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--text-dark);
+            margin-bottom: var(--spacing-md);
         }
     </style>
 </head>
 <body>
+    <!-- Header using EXACT official style guide structure -->
     <header class="site-header">
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <span class="logo-icon">📷</span>
+                    <span class="logo-icon">📸</span>
                     <a href="/">Camera Manual Vault</a>
                 </div>
                 <nav class="main-nav">
@@ -125,87 +326,459 @@
                     <a href="/cameras" class="active">Cameras</a>
                     <a href="/camera-finder">Camera Finder</a>
                     <a href="/productions">Productions</a>
-                    <a href="/camera-blog">Camera Blog</a>
+                    <a href="/forum">Forum</a>
                     <a href="/login">Login</a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <div class="stats-bar">
-        <h1>Camera Database</h1>
-        <div class="stats" id="stats">
-            <div class="stat-item">
-                <div class="stat-number" id="camera-count">0</div>
-                <div class="stat-label">Total Cameras</div>
+    <!-- Main Content using official page-content class -->
+    <div class="page-content">
+        <div class="container">
+            <h1>Camera Database</h1>
+            <p class="text-muted text-large">Browse our comprehensive collection of camera manuals and specifications</p>
+            
+            <!-- Search Bar using official card class -->
+            <div class="search-bar card">
+                <h3>Search & Filter</h3>
+                <div class="search-input-group mt-3">
+                    <input type="text" class="form-input search-input" id="searchInput" placeholder="Search cameras by name, brand, or model...">
+                    <select class="form-select filter-select" id="brandFilter">
+                        <option value="">All Brands</option>
+                        <option value="Canon">Canon</option>
+                        <option value="Nikon">Nikon</option>
+                        <option value="Sony">Sony</option>
+                        <option value="Fujifilm">Fujifilm</option>
+                        <option value="Panasonic">Panasonic</option>
+                        <option value="Olympus">Olympus</option>
+                        <option value="Leica">Leica</option>
+                        <option value="Hasselblad">Hasselblad</option>
+                        <option value="RED">RED</option>
+                        <option value="ARRI">ARRI</option>
+                        <option value="Blackmagic">Blackmagic</option>
+                    </select>
+                    <select class="form-select filter-select" id="yearFilter">
+                        <option value="">All Years</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2010s">2010-2019</option>
+                        <option value="2000s">2000-2009</option>
+                        <option value="1990s">1990-1999</option>
+                        <option value="vintage">Before 1990</option>
+                    </select>
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number" id="brand-count">0</div>
-                <div class="stat-label">Brands</div>
+
+            <!-- Alphabet Navigation using official card class -->
+            <div class="alphabet-nav card">
+                <h3>Browse by Letter</h3>
+                <div class="alphabet-buttons" id="alphabetNav">
+                    <!-- Will be generated by JavaScript -->
+                </div>
             </div>
-            <div class="stat-item">
-                <div class="stat-number" id="manual-count">0</div>
-                <div class="stat-label">Manuals Available</div>
+
+            <!-- Camera List Container using official card class -->
+            <div class="camera-list-container card">
+                <div class="results-header">
+                    <div class="results-count">
+                        Showing <strong id="resultCount">0</strong> cameras
+                    </div>
+                    <div class="view-options">
+                        <button class="view-btn active" onclick="setView('list')">📋 List</button>
+                        <button class="view-btn" onclick="setView('grid')">⊞ Grid</button>
+                    </div>
+                </div>
+
+                <!-- Loading State using official loading class -->
+                <div class="loading" id="loading">
+                    Loading cameras...
+                </div>
+
+                <!-- Camera List -->
+                <ul class="camera-list" id="cameraList" style="display: none;">
+                    <!-- Will be populated by JavaScript -->
+                </ul>
+
+                <!-- Camera Grid using official grid classes -->
+                <div class="grid grid-4" id="cameraGrid" style="display: none;">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state-icon">📷</div>
+                    <h3>No cameras found</h3>
+                    <p>Try adjusting your filters or search terms</p>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination" style="display: none;">
+                    <!-- Will be populated by JavaScript -->
+                </div>
             </div>
         </div>
     </div>
 
-    <main class="container">
-        <div class="camera-grid" id="camera-grid">
-            <!-- Cameras will be loaded here -->
+    <!-- Footer using EXACT official style guide structure -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="/about">About CMV</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                        <li><a href="/contribute">Contribute</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/cameras">All Cameras</a></li>
+                        <li><a href="/brands">Brands</a></li>
+                        <li><a href="/manuals">Manuals</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/dmca">DMCA</a></li>
+                        <li><a href="/attribution">Attribution</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-muted mt-5">
+                <p>&copy; 2025 Camera Manual Vault. All rights reserved.</p>
+            </div>
         </div>
-    </main>
+    </footer>
 
     <script>
+        let allCameras = [];
+        let filteredCameras = [];
+        let currentPage = 1;
+        const camerasPerPage = 20;
+        let currentView = 'list';
+        let selectedLetter = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateAlphabetNav();
+            loadCameras();
+            setupEventListeners();
+        });
+
+        // Generate alphabet navigation
+        function generateAlphabetNav() {
+            const alphabetNav = document.getElementById('alphabetNav');
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('');
+            
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.textContent = letter;
+                btn.onclick = () => filterByLetter(letter);
+                btn.id = `letter-${letter}`;
+                alphabetNav.appendChild(btn);
+            });
+        }
+
+        // Load cameras from API
         async function loadCameras() {
             try {
                 const response = await fetch('/api/cameras');
-                const cameras = await response.json();
+                const data = await response.json();
                 
-                // Update stats
-                const cameraCount = cameras.length;
-                const brands = [...new Set(cameras.map(c => c.brand))];
-                const manualsCount = cameras.filter(c => c.manualUrl).length;
+                allCameras = data.cameras || data;
                 
-                document.getElementById('camera-count').textContent = cameraCount;
-                document.getElementById('brand-count').textContent = brands.length;
-                document.getElementById('manual-count').textContent = manualsCount;
+                // Sort alphabetically by full name
+                allCameras.sort((a, b) => {
+                    const nameA = `${a.brand} ${a.model}`.toLowerCase();
+                    const nameB = `${b.brand} ${b.model}`.toLowerCase();
+                    return nameA.localeCompare(nameB);
+                });
                 
-                // Display cameras
-                const grid = document.getElementById('camera-grid');
-                grid.innerHTML = cameras.map(camera => `
-                    <div class="camera-card" onclick="window.location.href='/camera/${camera.id}'">
-                        <img src="${camera.imageUrl || '/images/camera-placeholder.jpg'}" 
-                             alt="${camera.fullName}" 
-                             class="camera-image"
+                filteredCameras = [...allCameras];
+                updateDisplay();
+                updateLetterButtons();
+            } catch (error) {
+                console.error('Error loading cameras:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterCameras);
+            document.getElementById('brandFilter').addEventListener('change', filterCameras);
+            document.getElementById('yearFilter').addEventListener('change', filterCameras);
+        }
+
+        // Filter by letter
+        function filterByLetter(letter) {
+            selectedLetter = letter;
+            
+            // Update active button
+            document.querySelectorAll('.letter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`letter-${letter}`).classList.add('active');
+            
+            filterCameras();
+        }
+
+        // Filter cameras
+        function filterCameras() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const brandFilter = document.getElementById('brandFilter').value;
+            const yearFilter = document.getElementById('yearFilter').value;
+            
+            filteredCameras = allCameras.filter(camera => {
+                const fullName = `${camera.brand} ${camera.model}`.toLowerCase();
+                
+                // Search filter
+                if (searchTerm && !fullName.includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Brand filter
+                if (brandFilter && camera.brand !== brandFilter) {
+                    return false;
+                }
+                
+                // Year filter
+                if (yearFilter) {
+                    const year = camera.release_year || camera.releaseYear;
+                    if (yearFilter === '2010s' && (year < 2010 || year > 2019)) return false;
+                    if (yearFilter === '2000s' && (year < 2000 || year > 2009)) return false;
+                    if (yearFilter === '1990s' && (year < 1990 || year > 1999)) return false;
+                    if (yearFilter === 'vintage' && year >= 1990) return false;
+                    if (yearFilter.length === 4 && year != yearFilter) return false;
+                }
+                
+                // Letter filter
+                if (selectedLetter) {
+                    const firstChar = camera.brand[0].toUpperCase();
+                    if (selectedLetter === '#') {
+                        return !'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.includes(firstChar);
+                    } else {
+                        return firstChar === selectedLetter;
+                    }
+                }
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            updateDisplay();
+        }
+
+        // Update display
+        function updateDisplay() {
+            const start = (currentPage - 1) * camerasPerPage;
+            const end = start + camerasPerPage;
+            const camerasToShow = filteredCameras.slice(start, end);
+            
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            
+            // Update result count
+            document.getElementById('resultCount').textContent = filteredCameras.length;
+            
+            if (filteredCameras.length === 0) {
+                document.getElementById('cameraList').style.display = 'none';
+                document.getElementById('cameraGrid').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('pagination').style.display = 'none';
+            } else {
+                document.getElementById('emptyState').style.display = 'none';
+                
+                if (currentView === 'list') {
+                    displayListView(camerasToShow);
+                } else {
+                    displayGridView(camerasToShow);
+                }
+                
+                updatePagination();
+            }
+        }
+
+        // Display list view
+        function displayListView(cameras) {
+            const cameraList = document.getElementById('cameraList');
+            cameraList.style.display = 'block';
+            document.getElementById('cameraGrid').style.display = 'none';
+            
+            cameraList.innerHTML = cameras.map(camera => {
+                const year = camera.release_year || camera.releaseYear;
+                const yearDisplay = year || 'Year Unknown';
+                const price = camera.price ? `$${camera.price}` : 'Price N/A';
+                const hasManual = camera.manual_url || camera.manualUrl;
+                const sensorSize = camera.sensor_size || camera.sensorSize || 'Sensor N/A';
+                const megapixels = camera.megapixels || camera.sensor_megapixels || 'MP N/A';
+                
+                return `
+                    <li class="camera-list-item" onclick="window.location.href='/camera/${camera.id || camera.slug}'">
+                        <img src="${camera.image_url || '/images/camera-placeholder.jpg'}" 
+                             alt="${camera.brand} ${camera.model}" 
+                             class="camera-thumbnail"
                              onerror="this.src='/images/camera-placeholder.jpg'">
-                        <div class="camera-info">
-                            <div class="camera-brand">${camera.brand || 'Unknown'}</div>
-                            <div class="camera-model">${camera.model || 'Unknown Model'}</div>
-                            <div class="camera-specs">
-                                ${camera.sensorMegapixels ? `<span class="spec-badge">${camera.sensorMegapixels}MP</span>` : ''}
-                                ${camera.sensorSize ? `<span class="spec-badge">${camera.sensorSize}</span>` : ''}
-                                ${camera.videoMaxResolution ? `<span class="spec-badge">${camera.videoMaxResolution}</span>` : ''}
-                                ${camera.ibis ? '<span class="spec-badge">IBIS</span>' : ''}
+                        <div class="camera-list-info">
+                            <div class="camera-list-details">
+                                <a href="/camera/${camera.id || camera.slug}" class="camera-list-name" onclick="event.stopPropagation()">
+                                    ${camera.brand} ${camera.model}
+                                </a>
+                                <div class="camera-list-meta">
+                                    <span>Year: ${yearDisplay}</span>
+                                    <span>•</span>
+                                    <span>${sensorSize}</span>
+                                    <span>•</span>
+                                    <span>${megapixels}${megapixels !== 'MP N/A' ? ' MP' : ''}</span>
+                                </div>
                             </div>
-                            <div class="camera-meta">
-                                <span class="release-year">${camera.releaseYear || 'Year Unknown'}</span>
-                                ${camera.manualUrl ? 
-                                    '<a href="#" class="manual-link" onclick="event.stopPropagation(); window.open(\'' + camera.manualUrl + '\')">Manual →</a>' : 
-                                    '<span style="color: #999;">No manual</span>'
+                            <div class="camera-list-specs">
+                                <span class="camera-price">${price}</span>
+                                ${hasManual ? 
+                                    '<span class="manual-indicator">Manual Available</span>' : 
+                                    '<span class="manual-indicator no-manual">No Manual</span>'
                                 }
                             </div>
                         </div>
+                    </li>
+                `;
+            }).join('');
+        }
+
+        // Display grid view
+        function displayGridView(cameras) {
+            const cameraGrid = document.getElementById('cameraGrid');
+            cameraGrid.style.display = 'grid';
+            document.getElementById('cameraList').style.display = 'none';
+            
+            cameraGrid.innerHTML = cameras.map(camera => {
+                const year = camera.release_year || camera.releaseYear;
+                const yearDisplay = year || 'Unknown';
+                const price = camera.price ? `$${camera.price}` : '';
+                
+                return `
+                    <div class="camera-grid-item card" onclick="window.location.href='/camera/${camera.id || camera.slug}'">
+                        <img src="${camera.image_url || '/images/camera-placeholder.jpg'}" 
+                             alt="${camera.brand} ${camera.model}" 
+                             class="camera-grid-image"
+                             onerror="this.src='/images/camera-placeholder.jpg'">
+                        <h4 class="card-title">
+                            <a href="/camera/${camera.id || camera.slug}" class="camera-grid-name" onclick="event.stopPropagation()">
+                                ${camera.brand} ${camera.model}
+                            </a>
+                        </h4>
+                        <p class="card-meta">Year: ${yearDisplay}</p>
+                        ${price ? `<p class="text-large text-center" style="color: var(--primary-red); font-weight: bold;">${price}</p>` : ''}
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Error loading cameras:', error);
-                document.getElementById('camera-grid').innerHTML = '<p>Error loading cameras. Please try again.</p>';
+                `;
+            }).join('');
+        }
+
+        // Update pagination
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredCameras.length / camerasPerPage);
+            
+            if (totalPages <= 1) {
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('pagination').style.display = 'flex';
+            
+            const pagination = document.getElementById('pagination');
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `<button class="page-btn" onclick="previousPage()" ${currentPage === 1 ? 'disabled' : ''}>←</button>`;
+            
+            // Page numbers
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `<button class="page-btn" onclick="nextPage()" ${currentPage === totalPages ? 'disabled' : ''}>→</button>`;
+            
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Update letter buttons to show which have cameras
+        function updateLetterButtons() {
+            const letterCounts = {};
+            
+            allCameras.forEach(camera => {
+                const firstChar = camera.brand[0].toUpperCase();
+                if ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.includes(firstChar)) {
+                    letterCounts[firstChar] = (letterCounts[firstChar] || 0) + 1;
+                } else {
+                    letterCounts['#'] = (letterCounts['#'] || 0) + 1;
+                }
+            });
+            
+            document.querySelectorAll('.letter-btn').forEach(btn => {
+                const letter = btn.textContent;
+                if (!letterCounts[letter]) {
+                    btn.disabled = true;
+                }
+            });
+        }
+
+        // Pagination functions
+        function goToPage(page) {
+            currentPage = page;
+            updateDisplay();
+            window.scrollTo(0, 0);
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
             }
         }
-        
-        // Load cameras on page load
-        loadCameras();
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredCameras.length / camerasPerPage);
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        }
+
+        // Set view
+        function setView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            updateDisplay();
+        }
     </script>
 </body>
 </html>
