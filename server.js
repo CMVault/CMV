@@ -125,7 +125,7 @@ app.get('/api/cameras', async (req, res) => {
                 query += ' ORDER BY price ASC';
                 break;
             default:
-                query += ' ORDER BY lastUpdated DESC';
+                query += ' ORDER BY id DESC';
         }
         
         query += ' LIMIT ? OFFSET ?';
@@ -229,7 +229,7 @@ app.get('/api/homepage', async (req, res) => {
         // Get recent cameras
         const recentCameras = await dbAll(`
             SELECT * FROM cameras 
-            ORDER BY lastUpdated DESC 
+            ORDER BY id DESC 
             LIMIT 12
         `);
         
